@@ -4,21 +4,18 @@
   "private": true,
   "dependencies": {
     "express": "^4.17.1",
+    "express-promise-router": "^3.0.3",
     "pg": "^7.12.1",
-    "pg-hstore": "^2.3.3",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-scripts": "3.1.1",
-    "sequelize": "^5.16.0"
+    "react-scripts": "3.1.1"
   },
   "proxy": "http://localhost:8000",
   "scripts": {
-    "start": "node server/index.js",
-    "deploy": "cloud app deploy",
     "start-client": "react-scripts start",
-    "start-server": "nodemon --ignore '*.test.js' --watch server server/index.js",
+    "start-server": "NODE_ENV=development nodemon --ignore '*.test.js' --watch server server/index.js",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test-client": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -37,7 +34,6 @@
     ]
   },
   "devDependencies": {
-    "nodemon": "^1.19.1",
-    "sequelize-cli": "^5.5.0"
+    "nodemon": "^1.19.1"
   }
 }
