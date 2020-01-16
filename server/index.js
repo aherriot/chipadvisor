@@ -6,6 +6,8 @@ const api = require('./api')
 
 const app = express()
 
+app.use('/api', api)
+
 // Serve static assets
 app.use(express.static(path.resolve(__dirname, '..', 'build')))
 
@@ -15,8 +17,6 @@ app.use(express.static(path.resolve(__dirname, '..', 'images')))
 //   const imageName = req.url.substr(-1) === '/'
 //   res.sendFile(path.resolve(__dirname, '..', 'images'))
 // })
-
-app.use('/api', api)
 
 // Always return the main index.html, so react-router render the route in the client
 app.get('*', (req, res) => {
