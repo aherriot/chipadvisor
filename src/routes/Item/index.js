@@ -42,7 +42,7 @@ const Item = view(({ match: { params: { geoId, chipId } } }) => {
     return null
   }
 
-  const noReviews = reviews.length === 0
+  const hasReviews = reviews.length !== 0
 
   return (
     <StyledItem>
@@ -66,7 +66,7 @@ const Item = view(({ match: { params: { geoId, chipId } } }) => {
             <span>
               {reviews.length + (reviews.length === 1 ? ' review' : ' reviews')}
             </span>
-            {reviews.length != 0 && (
+            {hasReviews && (
               <span>Average Rating: {chip.rating.toFixed(1)}</span>
             )}
           </StyledReviewSummary>

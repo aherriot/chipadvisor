@@ -1,4 +1,6 @@
 const Router = require('express-promise-router')
+const multer = require('multer')
+
 const db = require('../db')
 const { processError } = require('./utils')
 
@@ -75,13 +77,25 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.post('/', async (req, res) => {
-  const { title, description, imgUrl } = req.body
+const imgUpload = multer({
+  dest: './data/images'
+})
+
+router.post('/', imgUpload.single('file'), async (req, res) => {
+  const { userId, title, description, file, geos } = req.body
   const result = await db.query(
     `insert into chips 
-    (title, description, img_url) values ($1, $2, $3)`,
+    (title, description, img_url) values ($1, $2, $3);`,
     [title, description, imgUrl]
   )
+
+  geos.forEach(geo => {
+    db.query(
+      `insert int geos_chips
+      (geo_id, chip_id, created_by) values ($1, $2, $3);`,
+      [result.rows[0].id, geo, userId]
+    )
+  })
 
   return res.send({ data: result.rows })
 })

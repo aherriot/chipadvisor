@@ -49,11 +49,11 @@ const NewReview = view(({ match: { params: { geoId, chipId } } }) => {
       const result = await resp.json()
 
       if (!resp.ok) {
-        // setError('description', 'error', result.message)
+        setError('description', 'error', result.message)
         return
       }
     } catch (e) {
-      // setError('email', 'error', 'Server error')
+      setError('email', 'error', 'Server error')
       console.error(e)
     }
   }
