@@ -60,12 +60,12 @@ const List = view(({ match: { params: { geoId } } }) => {
       {filteredChips.map((chip, i) => (
         <ListCell key={chip.id} geoId={geoId} rank={i + 1} {...chip} />
       ))}
-      <StyledContent>
+      <StyledFooter>
         <p>
           Is your favourite chip missing?{' '}
           <Link to={`/chips/${geoId}/new`}>Add it</Link>
         </p>
-      </StyledContent>
+      </StyledFooter>
       <NewChipButton geoId={geoId} />
     </div>
   )
@@ -77,6 +77,13 @@ List.propTypes = {
 
 const StyledContent = styled.div`
   padding: 0 16px 16px;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+`
+
+const StyledFooter = styled.div`
+  padding: 24px 16px;
   max-width: 400px;
   margin: 0 auto;
   text-align: center;
