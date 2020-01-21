@@ -7,11 +7,12 @@ function Header(props) {
   const userId = window.localStorage.getItem('userId')
   return (
     <StyledHeader>
-      <div>
+      <StyledLeft>
+        <StyledLogo src='/potato128.png' alt='ChipAdvisor Logo' />
         <Link isLight to='/'>
           ChipAdvisor
         </Link>
-      </div>
+      </StyledLeft>
       <div>
         <Link isLight to={username ? `/profile/${userId}` : '/login'}>
           {username || 'Login'}
@@ -33,6 +34,16 @@ const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
+`
+
+const StyledLeft = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const StyledLogo = styled.img`
+  width: 24px;
+  margin-right: 8px;
 `
 
 export default Header
