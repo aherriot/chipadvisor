@@ -7,13 +7,16 @@ import { useForm } from 'react-hook-form'
 import Breadcrumb from 'components/Breadcrumb'
 import Header from 'components/Header'
 import TextInput from 'components/TextInput'
+import geosStore from 'store/geos'
 
-const NewItem = view(({ match: { params: { geoId, chipId } } }) => {
+const NewItem = view(({ match: { params: { geoId } } }) => {
   const { handleSubmit, register, errors } = useForm()
 
   if (!window.localStorage.getItem('username')) {
     return <Redirect push to='/login' />
   }
+
+  geosStore.fetch()
 
   const onSubmit = values => {
     console.log(values)
@@ -26,8 +29,8 @@ const NewItem = view(({ match: { params: { geoId, chipId } } }) => {
         crumbs={[
           { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
-          { url: `/chips/${geoId}`, title: geoId },
-          { url: `/chips/${geoId}/${chipId}`, title: chipId }
+          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title || '' },
+          { url: `/chips/${geoId}/new`, title: 'New Chip' }
         ]}
       />
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
@@ -42,17 +45,18 @@ const NewItem = view(({ match: { params: { geoId, chipId } } }) => {
         </StyledField>
         <StyledField>
           <StyledLabel>Cities</StyledLabel>
-          <select name='geos' ref={register({ required: 'Required' })}>
+          <select name='geos' multi ref={register({ required: 'Required' })}>
             <option value='1'>1 Bubble</option>
           </select>
         </StyledField>
         <StyledField>
-          <StyledLabel>Review</StyledLabel>
+          <StyledLabel>Description</StyledLabel>
           <StyledTextarea
-            name='content'
+            placeholder='This should be an impartial description of the potato chip. You can review the chip after.'
+            name='description'
             ref={register({ required: 'Required' })}></StyledTextarea>
-          {errors.content && (
-            <StyledError>{errors.content.message}</StyledError>
+          {errors.description && (
+            <StyledError>{errors.description.message}</StyledError>
           )}
         </StyledField>
         <StyledButton type='submit'>Submit</StyledButton>

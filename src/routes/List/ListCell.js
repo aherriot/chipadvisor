@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
+import Link from 'components/Link'
 import BubbleRating from 'components/BubbleRating'
 
 function ListCell({
@@ -16,14 +17,18 @@ function ListCell({
 }) {
   return (
     <StyledListCell>
-      <Link to={`/chips/${geoId}/${id}`}>
+      <RouterLink to={`/chips/${geoId}/${id}`}>
         <StyledImg src={imgUrl} alt={title} />
-      </Link>
+      </RouterLink>
       <StyledContent>
-        <StyledTitle>{`${rank}. ${title}`}</StyledTitle>
+        <StyledTitle>
+          <RouterLink to={`/chips/${geoId}/${id}`}>
+            {`${rank}. ${title}`}
+          </RouterLink>
+        </StyledTitle>
         <StyledRating>
           {rating == null ? (
-            'No Reviews Yet'
+            <Link to={`/chips/${geoId}/${id}`}>No Reviews Yet</Link>
           ) : (
             <>
               <BubbleRating rating={rating} />{' '}
@@ -75,6 +80,15 @@ const StyledContent = styled.div`
 
 const StyledTitle = styled.h2`
   margin-top: 4px;
+
+  & > a {
+    text-decoration: none;
+    color: ${({ theme }) => theme.color.black};
+
+    &:visited {
+      color: ${({ theme }) => theme.color.black};
+    }
+  }
 `
 
 const StyledRating = styled.div`
