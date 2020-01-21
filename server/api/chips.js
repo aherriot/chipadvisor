@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
       result = await db.query(
         `select 
             c.id,
-            c.img_url as imgUrl,
+            c.img_url,
             c.title,
             c.description,
             avg(r.rating) as rating,

@@ -3,9 +3,9 @@ create table users (
 	username varchar(20) not null unique,
   email varchar(128) not null unique,
 	password varchar(128),
-	last_login_at timestamptz not null default now()
+	last_login_at timestamptz not null default now(),
 	created_at timestamptz not null default now(),
-	updated_at timestamptz,
+	updated_at timestamptz
 );
 
 create table geos (
