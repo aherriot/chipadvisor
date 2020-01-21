@@ -1,22 +1,25 @@
-import React from "react";
+import React from 'react'
 // import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
+import { view } from 'react-easy-state'
+import geosStore from 'store/geos'
 
-function Home(props) {
+const Home = view(props => {
+  geosStore.fetch()
+
   return (
     <div>
       <ul>
-        <li>
-          <Link to="/chips/1">Ottawa</Link>
-        </li>
-        <li>
-          <Link to="/chips/2">Boston</Link>
-        </li>
+        {Object.values(geosStore.byId).map(geo => (
+          <li key={geo.id}>
+            <Link to={`/chips/${geo.id}`}>{geo.title}</Link>
+          </li>
+        ))}
       </ul>
     </div>
-  );
-}
+  )
+})
 
-Home.propTypes = {};
+Home.propTypes = {}
 
-export default Home;
+export default Home

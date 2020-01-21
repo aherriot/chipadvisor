@@ -4,7 +4,7 @@ const { processError } = require('./utils')
 
 const router = new Router()
 
-router.get('/geos', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const result = await db.query(`select * from geos;`)
     return res.send({ data: result.rows })
@@ -13,7 +13,7 @@ router.get('/geos', async (req, res) => {
   }
 })
 
-router.post('/geos', async (req, res) => {
+router.post('/', async (req, res) => {
   const { title, description, user_id } = req.body
   try {
     const result = await db.query(
@@ -26,7 +26,7 @@ router.post('/geos', async (req, res) => {
   }
 })
 
-router.put('/geos/:geoId', async (req, res) => {
+router.put('/:geoId', async (req, res) => {
   const { title, description, user_id } = req.body
   try {
     const result = await db.query(

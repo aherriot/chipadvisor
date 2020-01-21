@@ -1,16 +1,19 @@
 import React from 'react'
+import { view } from 'react-easy-state'
 import styled from 'styled-components'
+import { Redirect } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 
 import Breadcrumb from 'components/Breadcrumb'
 import Header from 'components/Header'
+import TextInput from 'components/TextInput'
 
-function NewItem({
-  match: {
-    params: { geoId, chipId }
-  }
-}) {
+const NewItem = view(({ match: { params: { geoId, chipId } } }) => {
   const { handleSubmit, register, errors } = useForm()
+
+  if (!window.localStorage.getItem('username')) {
+    return <Redirect push to='/login' />
+  }
 
   const onSubmit = values => {
     console.log(values)
@@ -30,23 +33,17 @@ function NewItem({
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
         <h2>Add New Chip</h2>
         <StyledField>
-          <StyledLabel>Email</StyledLabel>
-          <StyledInput
-            name='username'
+          <StyledLabel>Title</StyledLabel>
+          <TextInput
+            name='title'
             type='text'
-            ref={register({ required: 'Required' })}></StyledInput>
-          {errors.username && (
-            <StyledError>{errors.username.message}</StyledError>
-          )}
+            ref={register({ required: 'Required' })}></TextInput>
+          {errors.title && <StyledError>{errors.title.message}</StyledError>}
         </StyledField>
         <StyledField>
-          <StyledLabel>Rating</StyledLabel>
-          <select name='rating' ref={register({ required: 'Required' })}>
+          <StyledLabel>Cities</StyledLabel>
+          <select name='geos' ref={register({ required: 'Required' })}>
             <option value='1'>1 Bubble</option>
-            <option value='2'>2 Bubbles</option>
-            <option value='3'>3 Bubbles</option>
-            <option value='4'>4 Bubbles</option>
-            <option value='5'>5 Bubbles</option>
           </select>
         </StyledField>
         <StyledField>
@@ -62,7 +59,7 @@ function NewItem({
       </StyledForm>
     </StyledNewItem>
   )
-}
+})
 
 const StyledNewItem = styled.div``
 
@@ -81,12 +78,6 @@ const StyledLabel = styled.label`
   display: block;
   font-size: 13px;
   margin: 4px 0;
-`
-
-const StyledInput = styled.input`
-  width: 100%;
-  padding: 8px;
-  font-size: 16px;
 `
 
 const StyledTextarea = styled.textarea`

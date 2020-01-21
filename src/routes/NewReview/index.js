@@ -1,20 +1,64 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { useForm } from 'react-hook-form'
+import { view } from 'react-easy-state'
+import { Redirect } from 'react-router-dom'
+import { useForm, ErrorMessage } from 'react-hook-form'
 
 import Breadcrumb from 'components/Breadcrumb'
 import Header from 'components/Header'
+import geosStore from 'store/geos'
 
-function NewReview({
-  match: {
-    params: { geoId, chipId }
+const NewReview = view(({ match: { params: { geoId, chipId } } }) => {
+  const { handleSubmit, register, errors, setError } = useForm()
+
+  const [chip, setChip] = useState(null)
+  useEffect(() => {
+    const fetchChip = async () => {
+      try {
+        const resp = await fetch(`/api/chips/${chipId}`)
+        const result = await resp.json()
+        setChip(result.data)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    fetchChip()
+  }, [chipId])
+
+  geosStore.fetch()
+
+  if (!window.localStorage.getItem('username')) {
+    return <Redirect push to='/login' />
   }
-}) {
-  const { handleSubmit, register, errors } = useForm()
 
-  const onSubmit = values => {
+  const onSubmit = async values => {
     console.log(values)
+    try {
+      const resp = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: window.localStorage.getItem('userId'),
+          chipId: chipId,
+          rating: values.rating,
+          description: values.description
+        })
+      })
+      const result = await resp.json()
+
+      if (!resp.ok) {
+        // setError('description', 'error', result.message)
+        return
+      }
+    } catch (e) {
+      // setError('email', 'error', 'Server error')
+      console.error(e)
+    }
   }
+
+  console.log(errors)
 
   return (
     <StyledNewReview>
@@ -23,46 +67,38 @@ function NewReview({
         crumbs={[
           { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
-          { url: `/chips/${geoId}`, title: geoId },
-          { url: `/chips/${geoId}/${chipId}`, title: chipId }
+          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title ?? '' },
+          { url: `/chips/${geoId}/${chipId}`, title: chip?.title ?? '' }
         ]}
       />
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
         <h2>Review Chip</h2>
         <StyledField>
-          <StyledLabel>Email</StyledLabel>
-          <StyledInput
-            name='username'
-            type='text'
-            ref={register({ required: 'Required' })}></StyledInput>
-          {errors.username && (
-            <StyledError>{errors.username.message}</StyledError>
-          )}
-        </StyledField>
-        <StyledField>
           <StyledLabel>Rating</StyledLabel>
           <StyledSelect name='rating' ref={register({ required: 'Required' })}>
-            <option value='1'>1 Star</option>
-            <option value='2'>2 Stars</option>
-            <option value='3'>3 Stars</option>
-            <option value='4'>4 Stars</option>
-            <option value='5'>5 Stars</option>
+            <option value='1'>1 Bubble</option>
+            <option value='2'>2 Bubbles</option>
+            <option value='3'>3 Bubbles</option>
+            <option value='4'>4 Bubbles</option>
+            <option value='5'>5 Bubbles</option>
           </StyledSelect>
         </StyledField>
         <StyledField>
-          <StyledLabel>Review</StyledLabel>
+          <StyledLabel>Review (minimum 100 characters)</StyledLabel>
           <StyledTextarea
-            name='content'
-            ref={register({ required: 'Required' })}></StyledTextarea>
-          {errors.content && (
-            <StyledError>{errors.content.message}</StyledError>
-          )}
+            name='description'
+            ref={register({
+              required: 'Required'
+              // minLength: 100,
+              // maxLength: 5
+            })}></StyledTextarea>
+          <ErrorMessage as={StyledError} errors={errors} name='description' />
         </StyledField>
         <StyledButton type='submit'>Submit</StyledButton>
       </StyledForm>
     </StyledNewReview>
   )
-}
+})
 
 const StyledNewReview = styled.div``
 
@@ -82,20 +118,6 @@ const StyledLabel = styled.label`
   font-size: 13px;
   margin: 4px 0;
 `
-
-const StyledInput = styled.input`
-  width: 100%;
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: 1px solid black;
-
-  &:focus {
-    outline: none;
-    border: 2px solid ${props => props.theme.color.main};
-  }
-`
-
 const StyledSelect = styled.select`
   padding: 8px;
   border: 1px solid black;
@@ -114,7 +136,7 @@ const StyledSelect = styled.select`
 
 const StyledTextarea = styled.textarea`
   width: 100%;
-  height: 100px;
+  height: 150px;
 
   padding: 8px;
   font-size: 16px;

@@ -4,6 +4,8 @@ const { processError } = require('./utils')
 
 const router = new Router()
 
+const KEY_CONSTRAINT = '23505'
+
 router.get('/', async (req, res) => {
   try {
     const result = await db.query(`select * from users;`)
@@ -21,11 +23,11 @@ router.post('/', async (req, res) => {
       code: 'MISSING_USERNAME',
       message: 'Field username is required.'
     })
-  } else if (username.length < 6 || username.length > 20) {
+  } else if (username.length < 4 || username.length > 12) {
     return res.status(400).json({
       status: 400,
       code: 'INVALID_USERNAME',
-      message: 'Field username is must be between 6 and 20 characters.'
+      message: 'Field username is must be between 4 and 12 characters.'
     })
   } else if (!email) {
     return res.status(400).json({
@@ -41,18 +43,26 @@ router.post('/', async (req, res) => {
     return res.status(400).json({
       status: 400,
       code: 'INVALID_EMAIL',
-      message: 'Field username is required.'
+      message: 'Field email must be a tripadvisor email address.'
     })
   }
 
   try {
     const result = await db.query(
       `insert into users (username, email) values ($1, $2) returning *;`,
-      [req.body.username, req.body.email]
+      [username.toLowerCase(), email.toLowerCase()]
     )
 
     return res.json({ data: result.rows[0] })
   } catch (e) {
+    // if the user already exists, return the pre-existing user
+    if (e && e.code === KEY_CONSTRAINT) {
+      const result = await db.query(
+        `select * from users where username = $1;`,
+        [username.toLowerCase()]
+      )
+      return res.json({ data: result.rows[0] })
+    }
     return processError(e, res)
   }
 })

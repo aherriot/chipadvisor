@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import BubbleRating from "components/BubbleRating";
+import React from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+import BubbleRating from 'components/BubbleRating'
 
 function ListCell({
   geoId,
@@ -22,15 +22,21 @@ function ListCell({
       <StyledContent>
         <StyledTitle>{`${rank}. ${title}`}</StyledTitle>
         <StyledRating>
-          <BubbleRating rating={rating} />{" "}
-          <span>
-            {numOfReviews} {numOfReviews !== 1 ? " Reviews" : " Review"}
-          </span>
+          {rating == null ? (
+            'No Reviews Yet'
+          ) : (
+            <>
+              <BubbleRating rating={rating} />{' '}
+              <span>
+                {numOfReviews} {numOfReviews !== 1 ? ' Reviews' : ' Review'}
+              </span>
+            </>
+          )}
         </StyledRating>
         <StyledDescription>{description}</StyledDescription>
       </StyledContent>
     </StyledListCell>
-  );
+  )
 }
 
 ListCell.propTypes = {
@@ -39,10 +45,10 @@ ListCell.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   rank: PropTypes.number.isRequired,
-  rating: PropTypes.number.isRequired,
+  rating: PropTypes.number,
   numOfReviews: PropTypes.number.isRequired,
   imgUrl: PropTypes.string.isRequired
-};
+}
 
 const StyledListCell = styled.div`
   margin: 0 auto;
@@ -54,22 +60,22 @@ const StyledListCell = styled.div`
   @media only screen and (min-width: 600px) {
     grid-template-columns: 300px auto;
   }
-`;
+`
 
 const StyledImg = styled.img`
   width: 100%;
   height: 200px;
   background-color: grey;
   object-fit: cover;
-`;
+`
 
 const StyledContent = styled.div`
   padding: 10px;
-`;
+`
 
 const StyledTitle = styled.h2`
   margin-top: 4px;
-`;
+`
 
 const StyledRating = styled.div`
   display: flex;
@@ -79,10 +85,12 @@ const StyledRating = styled.div`
     margin-bottom: 2px;
     font-size: 14px;
   }
-`;
+`
 
 const StyledDescription = styled.div`
-  margin-top: 20px;
-`;
+  margin-top: 10px;
+  max-height: 100px;
+  overflow: hidden;
+`
 
-export default ListCell;
+export default ListCell

@@ -3,7 +3,10 @@ import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import theme from './theme'
+
 import Home from './routes/Home'
+import Login from './routes/Login'
+import Profile from './routes/Profile'
 import List from './routes/List'
 import Item from './routes/Item'
 import NewItem from './routes/NewItem'
@@ -34,8 +37,10 @@ function App() {
       <Router>
         <Switch>
           <Route path='/' exact component={Home}></Route>
-          <Route path='/users/:userId' exact component={User}></Route>
           <Route path='/chips' exact component={Home}></Route>
+          <Route path='/login' exact component={Login}></Route>
+          <Route path='/profile/:userId' exact component={Profile}></Route>
+          <Route path='/users/:userId' exact component={User}></Route>
           <Route path='/chips/:geoId' exact component={List}></Route>
           <Route path='/chips/:geoId/new' exact component={NewItem}></Route>
           <Route
@@ -48,11 +53,5 @@ function App() {
     </ThemeProvider>
   )
 }
-
-fetch('/api/users')
-  .then(res => res.json())
-  .then(data => {
-    console.log(data)
-  })
 
 export default App
