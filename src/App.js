@@ -12,6 +12,7 @@ import Item from './routes/Item'
 import NewItem from './routes/NewItem'
 import NewReview from './routes/NewReview'
 import User from './routes/User'
+import NotFound from './routes/NotFound'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -48,6 +49,7 @@ function App() {
             exact
             component={NewReview}></Route>
           <Route path='/chips/:geoId/:chipId' exact component={Item}></Route>
+          <Route component={NotFound} />
         </Switch>
       </Router>
     </ThemeProvider>
