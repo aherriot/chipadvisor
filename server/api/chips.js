@@ -94,10 +94,10 @@ function convertDbRowToChip(row) {
     description: row.description,
     rating: parseInt(row.rating, 10),
     numOfReviews: parseInt(row.num_of_reviews, 10),
-    createdAt: row.createdAt,
-    createdBy: row.created,
-    updatedAt: row.updatedAt,
-    updatedBy: row.updatedBy
+    createdAt: row.created_at,
+    createdBy: row.created_by,
+    updatedAt: row.updated_at,
+    updatedBy: row.updated_by
   }
 }
 
