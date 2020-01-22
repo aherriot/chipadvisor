@@ -1,36 +1,36 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import Link from "components/Link";
+import React from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import Link from 'components/Link'
 
 function Breadcrumb({ crumbs }) {
   return (
     <StyledBreadcrumb>
       <ul>
         {crumbs.map((crumb, i) => {
-          if (i === crumbs.length - 1) {
-            return <li key={i}>{crumb.title}</li>;
-          } else {
+          if (crumb.url) {
             return (
               <li key={i}>
                 <Link to={crumb.url}>{crumb.title}</Link>
               </li>
-            );
+            )
+          } else {
+            return <li key={i}>{crumb.title}</li>
           }
         })}
       </ul>
     </StyledBreadcrumb>
-  );
+  )
 }
 
 Breadcrumb.propTypes = {
   crumbs: PropTypes.arrayOf(
     PropTypes.shape({
-      url: PropTypes.string.isRequired,
+      url: PropTypes.string,
       title: PropTypes.string.isRequired
     }).isRequired
   ).isRequired
-};
+}
 
 const StyledBreadcrumb = styled.div`
   padding: 16px 16px;
@@ -43,9 +43,9 @@ const StyledBreadcrumb = styled.div`
   }
 
   & > ul li:not(:last-child)::after {
-    content: "/";
+    content: '/';
     padding: 0 10px;
   }
-`;
+`
 
-export default Breadcrumb;
+export default Breadcrumb

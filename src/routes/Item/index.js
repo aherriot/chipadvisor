@@ -42,7 +42,36 @@ const Item = view(({ match: { params: { geoId, chipId } } }) => {
     return null
   }
 
-  const hasReviews = reviews.length !== 0
+  let reviewContent
+  if (reviews.length !== 0) {
+    reviewContent = (
+      <>
+        <StyledReviewSummary>
+          <span>
+            {reviews.length + (reviews.length === 1 ? ' review' : ' reviews')}
+          </span>
+          <span>Average Rating: {chip.rating.toFixed(1)}</span>
+        </StyledReviewSummary>
+
+        <ReviewLinkWrapper>
+          <Link to={`/chips/${geoId}/${chipId}/review`}>Write a Review</Link>
+        </ReviewLinkWrapper>
+        {reviews.map(review => (
+          <Review key={review.id} {...review} />
+        ))}
+        <ReviewLinkWrapper>
+          <Link to={`/chips/${geoId}/${chipId}/review`}>Write a Review</Link>
+        </ReviewLinkWrapper>
+      </>
+    )
+  } else {
+    reviewContent = (
+      <div>
+        Be the first to{' '}
+        <Link to={`/chips/${geoId}/${chipId}/review`}>Write a Review</Link>
+      </div>
+    )
+  }
 
   return (
     <StyledItem>
@@ -52,7 +81,7 @@ const Item = view(({ match: { params: { geoId, chipId } } }) => {
           { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
           { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title ?? '' },
-          { url: `/chips/${geoId}/${chipId}`, title: chip.title }
+          { title: chip.title }
         ]}
       />
       <StyledWrapper>
@@ -62,24 +91,8 @@ const Item = view(({ match: { params: { geoId, chipId } } }) => {
           <p>{chip.description}</p>
 
           <h2>Reviews</h2>
-          <StyledReviewSummary>
-            <span>
-              {reviews.length + (reviews.length === 1 ? ' review' : ' reviews')}
-            </span>
-            {hasReviews && (
-              <span>Average Rating: {chip.rating.toFixed(1)}</span>
-            )}
-          </StyledReviewSummary>
-          <ReviewLinkWrapper>
-            <Link to={`/chips/${geoId}/${chipId}/review`}>Write a Review</Link>
-          </ReviewLinkWrapper>
+          {reviewContent}
         </StyledContent>
-        {reviews.map(review => (
-          <Review key={review.id} {...review} />
-        ))}
-        <BottomNewReviewLink>
-          <Link to={`/chips/${geoId}/${chipId}/review`}>Write a Review</Link>
-        </BottomNewReviewLink>
       </StyledWrapper>
     </StyledItem>
   )
@@ -117,11 +130,6 @@ const StyledReviewSummary = styled.div`
 const ReviewLinkWrapper = styled.div`
   text-align: right;
   margin: 8px 0;
-`
-
-const BottomNewReviewLink = styled.div`
-  text-align: right;
-  margin: 8px;
 `
 
 export default Item

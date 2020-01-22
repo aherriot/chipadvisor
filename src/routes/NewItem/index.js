@@ -38,8 +38,7 @@ const NewItem = view(({ match: { params: { geoId } } }) => {
         crumbs={[
           { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
-          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title || '' },
-          { url: `/chips/${geoId}/new`, title: 'New Chip' }
+          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title || '' }
         ]}
       />
       <StyledForm

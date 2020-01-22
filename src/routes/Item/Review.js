@@ -17,7 +17,7 @@ function Review({
     <StyledReview>
       <StyledAuthorLine>
         <Link to={`/profile/${userId}`}>{username}</Link>
-        <StyledDate>{createdAt}</StyledDate>
+        <StyledDate>{new Date(createdAt).toLocaleString()}</StyledDate>
       </StyledAuthorLine>
       <StyledRatingLine>
         <BubbleRating rating={rating} />
@@ -38,7 +38,7 @@ Review.propTypes = {
 }
 
 const StyledReview = styled.div`
-  margin-top: 10px;
+  margin: 10px -8px 0;
   background-color: #fff;
   padding: 12px 16px;
 `

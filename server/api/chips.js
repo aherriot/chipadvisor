@@ -85,7 +85,9 @@ router.post('/', imgUpload.single('file'), async (req, res) => {
   const { userId, title, description, file, geos } = req.body
   const result = await db.query(
     `insert into chips 
-    (title, description, img_url) values ($1, $2, $3);`,
+    (title, description, img_url) 
+    values ($1, $2, $3)
+    returning *;`,
     [title, description, imgUrl]
   )
 
@@ -97,7 +99,7 @@ router.post('/', imgUpload.single('file'), async (req, res) => {
     )
   })
 
-  return res.send({ data: result.rows })
+  return res.send({ data: convertDbRowToChip(result.rows[0]) })
 })
 
 function convertDbRowToChip(row) {

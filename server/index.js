@@ -14,7 +14,7 @@ app.use('/api', api)
 // Serve static assets
 app.use(express.static(path.resolve(__dirname, '..', 'build')))
 
-app.use(express.static(path.resolve(__dirname, '..', 'images')))
+app.use(express.static(path.resolve(__dirname, '..', 'data')))
 
 // app.get('/images/*', (req, res) => {
 //   const imageName = req.url.substr(-1) === '/'

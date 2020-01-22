@@ -8,8 +8,8 @@ import Breadcrumb from 'components/Breadcrumb'
 import Header from 'components/Header'
 import geosStore from 'store/geos'
 
-const NewReview = view(({ match: { params: { geoId, chipId } } }) => {
-  const { handleSubmit, register, errors, setError } = useForm()
+const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
+  const { handleSubmit, register, errors, setError, watch } = useForm()
 
   const [chip, setChip] = useState(null)
   useEffect(() => {
@@ -27,12 +27,13 @@ const NewReview = view(({ match: { params: { geoId, chipId } } }) => {
 
   geosStore.fetch()
 
+  const description = watch('description')
+
   if (!window.localStorage.getItem('username')) {
     return <Redirect push to='/login' />
   }
 
   const onSubmit = async values => {
-    console.log(values)
     try {
       const resp = await fetch('/api/reviews', {
         method: 'POST',
@@ -49,16 +50,20 @@ const NewReview = view(({ match: { params: { geoId, chipId } } }) => {
       const result = await resp.json()
 
       if (!resp.ok) {
-        setError('description', 'error', result.message)
+        setError(
+          'description',
+          'error',
+          result.message || 'Internal Server Error'
+        )
         return
+      } else {
+        history.push(`/chips/${geoId}/${chipId}`)
       }
     } catch (e) {
-      setError('email', 'error', 'Server error')
+      setError('description', 'error', 'Internal Server Error')
       console.error(e)
     }
   }
-
-  console.log(errors)
 
   return (
     <StyledNewReview>
@@ -68,11 +73,12 @@ const NewReview = view(({ match: { params: { geoId, chipId } } }) => {
           { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
           { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title ?? '' },
-          { url: `/chips/${geoId}/${chipId}`, title: chip?.title ?? '' }
+          { url: `/chips/${geoId}/${chipId}`, title: chip?.title ?? '' },
+          { title: 'New Review' }
         ]}
       />
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
-        <h2>Review Chip</h2>
+        <h2>Review {chip?.title}</h2>
         <StyledField>
           <StyledLabel>Rating</StyledLabel>
           <StyledSelect name='rating' ref={register({ required: 'Required' })}>
@@ -84,7 +90,9 @@ const NewReview = view(({ match: { params: { geoId, chipId } } }) => {
           </StyledSelect>
         </StyledField>
         <StyledField>
-          <StyledLabel>Review (minimum 100 characters)</StyledLabel>
+          <StyledLabel>
+            Review ({description?.length} of out at least 60 characters)
+          </StyledLabel>
           <StyledTextarea
             name='description'
             ref={register({

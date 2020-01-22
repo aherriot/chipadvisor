@@ -46,7 +46,7 @@ const List = view(({ match: { params: { geoId } } }) => {
         crumbs={[
           { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
-          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title ?? '' }
+          { title: geosStore.byId[geoId]?.title ?? '' }
         ]}
       />
       <StyledContent>

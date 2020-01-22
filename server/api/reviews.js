@@ -51,11 +51,11 @@ router.post('/', async (req, res) => {
       code: 'MISSING_DESCRIPTION',
       message: 'Field description is required.'
     })
-  } else if (description.length < 100 || description.length > 500) {
+  } else if (description.length < 60 || description.length > 500) {
     return res.status(400).json({
       status: 400,
       code: 'INVALID_DESCRIPTION',
-      message: 'Field description must be between 100 and 500 characters.'
+      message: 'Field description must be between 60 and 500 characters.'
     })
   }
 
@@ -64,12 +64,21 @@ router.post('/', async (req, res) => {
       `insert into reviews
       (user_id, chip_id, rating, description)
       values
-      ($1, $2, $3, $4);`,
+      ($1, $2, $3, $4) 
+      returning *;`,
       [userId, chipId, rating, description]
     )
-    res.json({ data: convertDbRowToReview(result.rows[0]) })
+    return res.json({ data: convertDbRowToReview(result.rows[0]) })
   } catch (e) {
-    processError(e, res)
+    if (e.code === '23505') {
+      return res.status(400).json({
+        status: 400,
+        code: 'DUPLICATE_REQUEST',
+        message: 'You cannot submit more than one review for the same chip.'
+      })
+    } else {
+      return processError(e, res)
+    }
   }
 })
 

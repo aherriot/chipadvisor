@@ -44,5 +44,6 @@ create table reviews (
 	rating integer not null,
 	description varchar(500) not null,
 	created_at timestamptz not null default now(),
-	updated_at timestamptz
+	updated_at timestamptz,
+	unique(user_id, chip_id)
 );
