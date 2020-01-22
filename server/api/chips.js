@@ -239,7 +239,7 @@ function convertDbRowToChip(row) {
     createdBy: row.created_by,
     updatedAt: row.updated_at,
     updatedBy: row.updated_by,
-    rating: row.rating ? parseInt(row.rating, 10) : null,
+    rating: row.rating ? parseFloat(row.rating) : null,
     numOfReviews: row.num_of_reviews ? parseInt(row.num_of_reviews, 10) : null
   }
 }

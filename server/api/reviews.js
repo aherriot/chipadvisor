@@ -107,7 +107,7 @@ function convertDbRowToReview(row) {
     userId: row.user_id,
     username: row.username,
     chipId: row.chip_id,
-    rating: parseInt(row.rating, 10),
+    rating: parseFloat(row.rating),
     description: row.description,
     createdAt: row.created_at,
     updatedAt: row.updated_at
