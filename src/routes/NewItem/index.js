@@ -110,7 +110,7 @@ const NewItem = view(({ history, match: { params: { geoId } } }) => {
           )}
         </StyledField>
         <StyledField>
-          <StyledLabel>Image of Chip Package</StyledLabel>
+          <StyledLabel>Image of Chips (limit 1MB)</StyledLabel>
           <TextInput
             name='image'
             type='file'
