@@ -18,9 +18,7 @@ const List = view(({ match: { params: { geoId } } }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
 
-  useEffect(() => {
-    geosStore.fetch()
-  }, [])
+  geosStore.fetch()
 
   useEffect(() => {
     setIsLoading(true)

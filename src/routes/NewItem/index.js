@@ -9,15 +9,16 @@ import Header from 'components/Header'
 import TextInput from 'components/TextInput'
 import geosStore from 'store/geos'
 
-import ImgThumbnail from './ImgThumbnail'
+// import ImgThumbnail from './ImgThumbnail'
 
-const NewItem = view(({ match: { params: { geoId } } }) => {
+const NewItem = view(({ history, match: { params: { geoId } } }) => {
   const {
     handleSubmit,
     register,
     unregister,
     watch,
     setValue,
+    setError,
     errors
   } = useForm()
 
@@ -33,10 +34,44 @@ const NewItem = view(({ match: { params: { geoId } } }) => {
     return () => unregister('image')
   }, [register, unregister])
 
-  const values = watch()
+  const description = watch('description')
 
-  const onSubmit = values => {
-    console.log(values)
+  const onSubmit = async values => {
+    const formData = new FormData()
+    formData.append('userId', window.localStorage.getItem('userId'))
+    formData.append('title', values.title)
+    formData.append('description', values.description)
+    formData.append('image', values.image)
+    formData.append('geos', values.geos)
+
+    let resp
+    try {
+      resp = await fetch(`/api/chips`, {
+        method: 'POST',
+        body: formData
+      })
+    } catch (e) {
+      console.error(e)
+      setError('title', 'error', e?.toString())
+      return
+    }
+
+    let result
+    try {
+      result = await resp.json()
+    } catch (e) {
+      console.error(e)
+      setError('title', 'error', e?.toString())
+      return
+    }
+
+    console.log(result)
+    if (resp.ok) {
+      history.goBack()
+    } else {
+      setError('title', 'error', 'Internal Server Error')
+      return
+    }
   }
 
   return (
@@ -47,7 +82,7 @@ const NewItem = view(({ match: { params: { geoId } } }) => {
           { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
           { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title || '' },
-          { url: `/chips/${geoId}/new`, title: 'New Chip' }
+          { title: 'New Chip' }
         ]}
       />
       <StyledForm
@@ -63,7 +98,9 @@ const NewItem = view(({ match: { params: { geoId } } }) => {
           {errors.title && <StyledError>{errors.title.message}</StyledError>}
         </StyledField>
         <StyledField>
-          <StyledLabel>Description</StyledLabel>
+          <StyledLabel>
+            Description ({description?.length} of out at least 60 characters)
+          </StyledLabel>
           <StyledTextarea
             placeholder='This should be an impartial description of the potato chip. You can review the chip after.'
             name='description'
@@ -82,7 +119,7 @@ const NewItem = view(({ match: { params: { geoId } } }) => {
             }}
           />
         </StyledField>
-        <ImgThumbnail file={values.image} />
+        {/* <ImgThumbnail file={values.image} /> */}
         <StyledField>
           <StyledLabel>Geos</StyledLabel>
           <StyledMultiSelect

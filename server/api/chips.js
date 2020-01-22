@@ -1,3 +1,4 @@
+const path = require('path')
 const Router = require('express-promise-router')
 const multer = require('multer')
 
@@ -117,15 +118,38 @@ router.get('/', async (req, res) => {
 })
 
 const imgUpload = multer({
-  dest: './data/images',
   limits: {
     files: 1,
     fileSize: 1000000
+  },
+  storage: multer.diskStorage({
+    destination: function(req, file, cb) {
+      cb(null, './data/images/chips')
+    },
+    filename: function(req, file, cb) {
+      const ext = path.extname(file.originalname)
+
+      cb(null, req.body.title + '-' + Math.random() + ext)
+    }
+  }),
+  fileFilter: function(req, file, cb) {
+    const ext = path.extname(file.originalname)
+    console.log(ext)
+    if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+      return cb(null, false)
+    }
+
+    cb(null, true)
   }
 })
 
 router.post('/', imgUpload.single('image'), async (req, res) => {
-  const { userId, title, description, image, geos } = req.body
+  const { userId, title, description } = req.body
+  const image = req.file
+  const geos = req.body.geos
+    ? req.body.geos.split(',').map(geo => parseInt(geo, 10))
+    : null
+
   if (!userId) {
     return res.status(400).json({
       status: 400,
@@ -168,7 +192,7 @@ router.post('/', imgUpload.single('image'), async (req, res) => {
       code: 'MISSING_GEOS',
       message: 'Field geos is required.'
     })
-  } else if (!Arrays.isArray(geos)) {
+  } else if (!Array.isArray(geos)) {
     return res.status(400).json({
       status: 400,
       code: 'INVALID_GEOS',
@@ -176,21 +200,31 @@ router.post('/', imgUpload.single('image'), async (req, res) => {
     })
   }
 
-  const result = await db.query(
-    `insert into chips 
-    (title, description, img_url) 
-    values ($1, $2, $3)
-    returning *;`,
-    [title, description, imgUrl]
-  )
-
-  geos.forEach(geo => {
-    db.query(
-      `insert int geos_chips
-      (geo_id, chip_id, created_by) values ($1, $2, $3);`,
-      [result.rows[0].id, geo, userId]
+  let result
+  try {
+    result = await db.query(
+      `insert into chips 
+      (title, description, img_url, created_by) 
+      values ($1, $2, $3, $4)
+      returning *;`,
+      [title, description, '/' + image.path, userId]
     )
-  })
+  } catch (e) {
+    return processError(e, res)
+  }
+
+  try {
+    geos.forEach(async geo => {
+      await db.query(
+        `insert into geos_chips
+        (geo_id, chip_id, created_by) 
+        values ($1, $2, $3);`,
+        [geo, result.rows[0].id, userId]
+      )
+    })
+  } catch (e) {
+    return processError(e, res)
+  }
 
   return res.send({ data: convertDbRowToChip(result.rows[0]) })
 })
