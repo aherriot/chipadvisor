@@ -12,7 +12,14 @@ import geosStore from 'store/geos'
 import ImgThumbnail from './ImgThumbnail'
 
 const NewItem = view(({ match: { params: { geoId } } }) => {
-  const { handleSubmit, register, watch, setValue, errors } = useForm()
+  const {
+    handleSubmit,
+    register,
+    unregister,
+    watch,
+    setValue,
+    errors
+  } = useForm()
 
   if (!window.localStorage.getItem('username')) {
     return <Redirect push to='/login' />
@@ -21,9 +28,10 @@ const NewItem = view(({ match: { params: { geoId } } }) => {
   geosStore.fetch()
 
   useEffect(() => {
-    register({ name: 'file' }, { required: 'Required' })
-    // fileValue = watch('file')
-  }, [register])
+    register({ name: 'image' }, { required: 'Required' })
+
+    return () => unregister('image')
+  }, [register, unregister])
 
   const values = watch()
 
@@ -38,7 +46,8 @@ const NewItem = view(({ match: { params: { geoId } } }) => {
         crumbs={[
           { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
-          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title || '' }
+          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title || '' },
+          { url: `/chips/${geoId}/new`, title: 'New Chip' }
         ]}
       />
       <StyledForm
@@ -66,15 +75,14 @@ const NewItem = view(({ match: { params: { geoId } } }) => {
         <StyledField>
           <StyledLabel>Image of Chip Package</StyledLabel>
           <TextInput
-            name='file'
+            name='image'
             type='file'
             onChange={e => {
-              setValue('file', e.target.files[0])
+              setValue('image', e.target.files[0])
             }}
-            // ref={register({ required: 'Required' })}
           />
         </StyledField>
-        <ImgThumbnail file={values.file} />
+        <ImgThumbnail file={values.image} />
         <StyledField>
           <StyledLabel>Geos</StyledLabel>
           <StyledMultiSelect

@@ -24,6 +24,25 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/byUserId/:userId', async (req, res) => {
+  const { userId } = req.params
+  if (userId) {
+    try {
+      let result = await db.query(
+        `select r.*
+        from reviews r
+        where r.user_id = $1
+        order by r.created_at;`,
+        [userId]
+      )
+
+      res.json({ data: result.rows.map(convertDbRowToReview) })
+    } catch (e) {
+      return processError(e, res)
+    }
+  }
+})
+
 router.post('/', async (req, res) => {
   const { userId, chipId, rating, description } = req.body
 
@@ -33,7 +52,7 @@ router.post('/', async (req, res) => {
       code: 'MISSING_USER_ID',
       message: 'Field userId is required.'
     })
-  } else if (!userId) {
+  } else if (!chipId) {
     return res.status(400).json({
       status: 400,
       code: 'MISSING_CHIP_ID',

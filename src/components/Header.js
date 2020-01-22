@@ -14,7 +14,7 @@ function Header(props) {
         </Link>
       </StyledLeft>
       <div>
-        <Link isLight to={username ? `/profile/${userId}` : '/login'}>
+        <Link isLight to={username ? `/profiles/${userId}` : '/login'}>
           {username || 'Login'}
         </Link>
       </div>

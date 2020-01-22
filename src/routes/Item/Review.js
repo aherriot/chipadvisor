@@ -16,7 +16,7 @@ function Review({
   return (
     <StyledReview>
       <StyledAuthorLine>
-        <Link to={`/profile/${userId}`}>{username}</Link>
+        <Link to={`/profiles/${userId}`}>{username}</Link>
         <StyledDate>{new Date(createdAt).toLocaleString()}</StyledDate>
       </StyledAuthorLine>
       <StyledRatingLine>
