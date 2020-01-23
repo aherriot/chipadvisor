@@ -78,7 +78,6 @@ const Item = view(({ match: { params: { geoId, chipId } } }) => {
       <Header />
       <Breadcrumb
         crumbs={[
-          { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
           { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title ?? '' },
           { title: chip.title }

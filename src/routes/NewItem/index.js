@@ -79,7 +79,6 @@ const NewItem = view(({ history, match: { params: { geoId } } }) => {
       <Header />
       <Breadcrumb
         crumbs={[
-          { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
           { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title || '' },
           { title: 'New Chip' }

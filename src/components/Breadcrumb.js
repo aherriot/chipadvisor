@@ -44,7 +44,7 @@ const StyledBreadcrumb = styled.div`
 
   & > ul li:not(:last-child)::after {
     content: '/';
-    padding: 0 10px;
+    padding: 0 6px;
   }
 `
 

@@ -70,7 +70,6 @@ const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
       <Header />
       <Breadcrumb
         crumbs={[
-          { url: '/', title: 'Home' },
           { url: `/chips`, title: 'Cities' },
           { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title ?? '' },
           { url: `/chips/${geoId}/${chipId}`, title: chip?.title ?? '' },
