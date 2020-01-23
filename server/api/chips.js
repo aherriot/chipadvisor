@@ -120,7 +120,7 @@ router.get('/', async (req, res) => {
 const imgUpload = multer({
   limits: {
     files: 1,
-    fileSize: 1000000
+    fileSize: 1024 * 1024
   },
   storage: multer.diskStorage({
     destination: function(req, file, cb) {
@@ -134,16 +134,19 @@ const imgUpload = multer({
   }),
   fileFilter: function(req, file, cb) {
     const ext = path.extname(file.originalname)
-    console.log(ext)
-    if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
-      return cb(null, false)
+    if (
+      (ext === '.png' && file.mimetype === 'image/png') ||
+      (ext === '.jpg' && file.mimetype === 'image/jpg') ||
+      (ext === '.jpeg' && file.mimetype === 'image/jpeg')
+    ) {
+      return cb(null, true)
     }
 
-    cb(null, true)
+    cb(null, false)
   }
-})
+}).single('image')
 
-router.post('/', imgUpload.single('image'), async (req, res) => {
+router.post('/', imgUpload, async (req, res) => {
   const { userId, title, description } = req.body
   const image = req.file
   const geos = req.body.geos

@@ -56,16 +56,14 @@ const NewItem = view(({ history, match: { params: { geoId } } }) => {
       return
     }
 
-    let result
     try {
-      result = await resp.json()
+      await resp.json()
     } catch (e) {
       console.error(e)
       setError('title', 'error', e?.toString())
       return
     }
 
-    console.log(result)
     if (resp.ok) {
       history.goBack()
     } else {
@@ -103,7 +101,17 @@ const NewItem = view(({ history, match: { params: { geoId } } }) => {
           <StyledTextarea
             placeholder='This should be an impartial description of the potato chip. You can review the chip after.'
             name='description'
-            ref={register({ required: 'Required' })}></StyledTextarea>
+            ref={register({
+              required: 'Required',
+              minLength: {
+                value: 6,
+                message: 'Must be at least 60 characters.'
+              },
+              maxLength: {
+                value: 500,
+                message: 'Must be 500 or less characters.'
+              }
+            })}></StyledTextarea>
           {errors.description && (
             <StyledError>{errors.description.message}</StyledError>
           )}
@@ -117,20 +125,24 @@ const NewItem = view(({ history, match: { params: { geoId } } }) => {
               setValue('image', e.target.files[0])
             }}
           />
+          {errors.image && <StyledError>{errors.image.message}</StyledError>}
         </StyledField>
         {/* <ImgThumbnail file={values.image} /> */}
         <StyledField>
-          <StyledLabel>Geos</StyledLabel>
+          <StyledLabel>Where is it available? (1 or more)</StyledLabel>
           <StyledMultiSelect
             name='geos'
             multiple
-            ref={register({ required: 'Required' })}>
+            ref={register({
+              required: 'Must select at least one city.'
+            })}>
             {Object.keys(geosStore.byId).map(geoId => (
               <option key={geoId} value={geoId}>
                 {geosStore.byId[geoId].title}
               </option>
             ))}
           </StyledMultiSelect>
+          {errors.geos && <StyledError>{errors.geos.message}</StyledError>}
         </StyledField>
         <StyledButton type='submit'>Submit</StyledButton>
       </StyledForm>
