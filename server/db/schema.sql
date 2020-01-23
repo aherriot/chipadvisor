@@ -34,7 +34,8 @@ create table geos_chips (
 	geo_id integer references geos not null,
 	chip_id integer references chips not null,
 	created_by integer references users,
-	created_at timestamptz not null default now()
+	created_at timestamptz not null default now(),
+	unique(geo_id, chip_id)
 );
 
 create table reviews (
@@ -47,3 +48,4 @@ create table reviews (
 	updated_at timestamptz,
 	unique(user_id, chip_id)
 );
+create index reviews_chip_id_idx on reviews(chip_id);

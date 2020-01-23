@@ -55,7 +55,7 @@ const List = view(({ match: { params: { geoId } } }) => {
           <StyledP>No chips match filter.</StyledP>
         )}
         {filteredChips.map((chip, i) => (
-          <ListCell key={chip.id} geoId={geoId} rank={i + 1} {...chip} />
+          <ListCell key={chip.id} geoId={geoId} rank={chip.ranking} {...chip} />
         ))}
       </>
     )

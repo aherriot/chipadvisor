@@ -82,13 +82,25 @@ router.get('/', async (req, res) => {
             c.updated_at,
             c.updated_by,
             avg(r.rating) as rating,
-            count(r.rating) as num_of_reviews
+            count(r.rating) as num_of_reviews,
+            row_number() over (
+              order by coalesce(avg(r.rating), 0) * 
+                case 
+                  when count(r.rating) = 1 then 0.5
+                  when count(r.rating) = 2 then 0.75
+                  else 1 end
+              desc) ranking
           from geos_chips gc
           join chips c on gc.chip_id = c.id
           left join reviews r on r.chip_id = c.id
           where gc.geo_id = $1
           group by c.id
-          order by coalesce(avg(r.rating), 0) desc;`,
+          order by coalesce(avg(r.rating), 0) * 
+          case 
+            when count(r.rating) = 1 then 0.5
+            when count(r.rating) = 2 then 0.75
+            else 1 end
+        desc;`,
         [geoId]
       )
     } else {
@@ -103,11 +115,23 @@ router.get('/', async (req, res) => {
             c.updated_at,
             c.updated_by,
             avg(r.rating) as rating,
-            count(r.rating) as num_of_reviews
+            count(r.rating) as num_of_reviews,
+            row_number() over (
+              order by coalesce(avg(r.rating), 0) * 
+                case 
+                  when count(r.rating) = 1 then 0.5
+                  when count(r.rating) = 2 then 0.75
+                  else 1 end
+              desc) ranking
           from chips c
           left join reviews r on r.chip_id = c.id
           group by c.id
-          order by coalesce(avg(r.rating), 0) desc;`
+          order by coalesce(avg(r.rating), 0) * 
+            case 
+              when count(r.rating) = 1 then 0.5
+              when count(r.rating) = 2 then 0.75
+              else 1 end
+          desc;`
       )
     }
 
@@ -243,6 +267,7 @@ function convertDbRowToChip(row) {
     updatedAt: row.updated_at,
     updatedBy: row.updated_by,
     rating: row.rating ? parseFloat(row.rating) : null,
+    ranking: row.ranking ? parseFloat(row.ranking) : null,
     numOfReviews: row.num_of_reviews ? parseInt(row.num_of_reviews, 10) : null
   }
 }
