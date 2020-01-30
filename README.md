@@ -1,6 +1,6 @@
 # Chipadvior
 
-## The world's leading travel potato chip review site.
+## The world's leading travel chip review site.
 
 Hosted at: [chipadvisor.aherriot.com](https:/chipadvisor.aherriot.com)
 

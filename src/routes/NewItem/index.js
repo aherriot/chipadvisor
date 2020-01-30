@@ -99,7 +99,7 @@ const NewItem = view(({ history, match: { params: { geoId } } }) => {
             Description ({description?.length} of out at least 60 characters)
           </StyledLabel>
           <StyledTextarea
-            placeholder='This should be an impartial description of the potato chip. You can review the chip after.'
+            placeholder='This should be an impartial description of the chip. You can review the chip after.'
             name='description'
             ref={register({
               required: 'Required',

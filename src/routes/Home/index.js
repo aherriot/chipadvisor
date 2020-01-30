@@ -15,8 +15,7 @@ const Home = view(props => {
 
       <StyledIntro>
         <p>
-          Welcome to ChipAdvisor. The world's leading travel potato chip review
-          site.
+          Welcome to ChipAdvisor. The world's leading travel chip review site.
         </p>
       </StyledIntro>
       <StyledGeoTiles>
