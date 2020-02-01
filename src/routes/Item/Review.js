@@ -22,7 +22,11 @@ function Review({
       <StyledRatingLine>
         <BubbleRating rating={rating} />
       </StyledRatingLine>
-      <StyledDescription>{description}</StyledDescription>
+      {description
+        .split('\n')
+        .map(paragraph =>
+          paragraph ? <StyledP>{paragraph}</StyledP> : <StyledP>&nbsp;</StyledP>
+        )}
     </StyledReview>
   )
 }
@@ -52,7 +56,7 @@ const StyledRatingLine = styled.div`
   margin: 8px 0;
 `
 
-const StyledDescription = styled.p`
+const StyledP = styled.p`
   font-size: 14px;
 `
 
