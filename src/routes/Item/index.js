@@ -130,14 +130,14 @@ const StyledContent = styled.div`
 `
 
 const StyledReviewSummary = styled.div`
-  display: flex;
+  display: flex
   justify-content: space-between;
   font-size: 14px;
 `
 
 const ReviewLinkWrapper = styled.div`
   text-align: right;
-  margin: 8px 0;
+  margin: 16px 0;
 `
 
 export default Item
