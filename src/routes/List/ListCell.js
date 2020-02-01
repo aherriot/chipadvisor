@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { Link as RouterLink } from 'react-router-dom'
-import Link from 'components/Link'
 import BubbleRating from 'components/BubbleRating'
 
 function ListCell({
@@ -17,51 +16,45 @@ function ListCell({
   imgUrl
 }) {
   return (
-    <StyledListCell>
-      <StyledImg src={imgUrl} alt={title} />
-      <StyledContent>
-        <StyledTitle>
-          <RouterLink
-            to={
-              `/chips/` +
-              `${geoId}-${encodeURIComponent(geoTitle)}` +
-              `/${id}-${encodeURIComponent(title)}`
-            }>
-            {`${rank}. ${title}`}
-          </RouterLink>
-        </StyledTitle>
-        <StyledRating>
-          {rating == null ? (
-            <Link
-              to={
-                `/chips/` +
-                `${geoId}-${encodeURIComponent(geoTitle)}` +
-                `/${id}-${encodeURIComponent(title)}`
-              }>
-              No Reviews Yet
-            </Link>
-          ) : (
-            <>
-              <BubbleRating rating={rating} />{' '}
-              <span>
-                {numOfReviews} {numOfReviews !== 1 ? ' Reviews' : ' Review'}
-              </span>
-            </>
-          )}
-        </StyledRating>
-      </StyledContent>
-      <StyledDescription>
-        {description
-          .split('\n')
-          .map((paragraph, i) =>
-            paragraph ? (
-              <StyledP key={i}>{paragraph}</StyledP>
+    <RouterLink
+      to={
+        `/chips/` +
+        `${geoId}-${encodeURIComponent(geoTitle)}` +
+        `/${id}-${encodeURIComponent(title)}`
+      }
+      css={`
+        text-decoration: none;
+      `}>
+      <StyledListCell>
+        <StyledImg src={imgUrl} alt={title} />
+        <StyledContent>
+          <StyledTitle>{`${rank}. ${title}`}</StyledTitle>
+          <StyledRating>
+            {rating == null ? (
+              'No Reviews Yet'
             ) : (
-              <StyledP key={i}>&nbsp;</StyledP>
-            )
-          )}
-      </StyledDescription>
-    </StyledListCell>
+              <>
+                <BubbleRating rating={rating} />{' '}
+                <span>
+                  {numOfReviews} {numOfReviews !== 1 ? ' Reviews' : ' Review'}
+                </span>
+              </>
+            )}
+          </StyledRating>
+        </StyledContent>
+        <StyledDescription>
+          {description
+            .split('\n')
+            .map((paragraph, i) =>
+              paragraph ? (
+                <StyledP key={i}>{paragraph}</StyledP>
+              ) : (
+                <StyledP key={i}>&nbsp;</StyledP>
+              )
+            )}
+        </StyledDescription>
+      </StyledListCell>
+    </RouterLink>
   )
 }
 
@@ -85,6 +78,16 @@ const StyledListCell = styled.div`
   background-color: #fff;
 
   display: grid;
+
+  color: ${({ theme }) => theme.color.black};
+  text-decoration: none;
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: ${({ theme }) => theme.color.black};
+    text-decoration: none;
+  }
 
   /* large */
   /* height: 200px; */
@@ -133,15 +136,6 @@ const StyledContent = styled.div`
 const StyledTitle = styled.h2`
   margin-top: 4px;
   font-size: 22px;
-
-  & > a {
-    text-decoration: none;
-    color: ${({ theme }) => theme.color.black};
-
-    &:visited {
-      color: ${({ theme }) => theme.color.black};
-    }
-  }
 `
 
 const StyledRating = styled.div`
