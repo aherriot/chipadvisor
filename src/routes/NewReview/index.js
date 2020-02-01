@@ -8,10 +8,12 @@ import Breadcrumb from 'components/Breadcrumb'
 import Header from 'components/Header'
 import geosStore from 'store/geos'
 
-const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
+const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
+  const geoId = parseInt(geo, 10)
+  const chipId = parseInt(chip, 10)
   const { handleSubmit, register, errors, setError, watch } = useForm()
 
-  const [chip, setChip] = useState(null)
+  const [chipData, setChipData] = useState(null)
   useEffect(() => {
     let isCancelled = false
 
@@ -20,7 +22,7 @@ const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
         const resp = await fetch(`/api/chips/${chipId}`)
         const result = await resp.json()
         if (!isCancelled) {
-          setChip(result.data)
+          setChipData(result.data)
         }
       } catch (e) {
         console.error(e)
@@ -48,6 +50,9 @@ const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
     )
   }
 
+  const geoTitle = geosStore.byId[geoId]?.title ?? ''
+  const chipTitle = chipData?.title ?? ''
+
   const onSubmit = async values => {
     try {
       const resp = await fetch('/api/reviews', {
@@ -72,7 +77,11 @@ const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
         )
         return
       } else {
-        history.push(`/chips/${geoId}/${chipId}`)
+        history.push(
+          `/chips/` +
+            `${geoId}-${encodeURIComponent(geoTitle)}/` +
+            `${chipId}-${encodeURIComponent(chipTitle)}`
+        )
       }
     } catch (e) {
       setError('description', 'error', 'Internal Server Error')
@@ -86,8 +95,8 @@ const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
       <Breadcrumb
         crumbs={[
           { url: `/chips`, title: 'Cities' },
-          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title ?? '' },
-          { url: `/chips/${geoId}/${chipId}`, title: chip?.title ?? '' },
+          { url: `/chips/${geoId}`, title: geoTitle },
+          { url: `/chips/${geoId}/${chipId}`, title: chipTitle },
           { title: 'New Review' }
         ]}
       />

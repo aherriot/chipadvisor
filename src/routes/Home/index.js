@@ -21,7 +21,7 @@ const Home = view(props => {
       <StyledGeoTiles>
         {Object.values(geosStore.byId).map(geo => (
           <StyledGeoTile key={geo.id}>
-            <Link to={`/chips/${geo.id}`}>
+            <Link to={`/chips/${geo.id}-${geo.title}`}>
               <StyledImg src={geo.imgUrl} alt={geo.title}></StyledImg>
               <StyledTileTitle>{geo.title}</StyledTileTitle>
             </Link>

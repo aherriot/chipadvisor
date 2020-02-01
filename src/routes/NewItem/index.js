@@ -11,7 +11,8 @@ import geosStore from 'store/geos'
 
 // import ImgThumbnail from './ImgThumbnail'
 
-const NewItem = view(({ history, match: { params: { geoId } } }) => {
+const NewItem = view(({ history, match: { params: { geo } } }) => {
+  const geoId = parseInt(geo, 10)
   const {
     handleSubmit,
     register,

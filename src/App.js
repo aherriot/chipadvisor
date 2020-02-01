@@ -42,13 +42,13 @@ function App() {
           <Route path='/login' exact component={Login}></Route>
           <Route path='/profiles/:userId' exact component={Profile}></Route>
           <Route path='/users/' exact component={User}></Route>
-          <Route path='/chips/:geoId' exact component={List}></Route>
-          <Route path='/chips/:geoId/new' exact component={NewItem}></Route>
+          <Route path='/chips/:geo' exact component={List}></Route>
+          <Route path='/chips/:geo/new' exact component={NewItem}></Route>
           <Route
-            path='/chips/:geoId/:chipId/review'
+            path='/chips/:geo/:chip/review'
             exact
             component={NewReview}></Route>
-          <Route path='/chips/:geoId/:chipId' exact component={Item}></Route>
+          <Route path='/chips/:geo/:chip' exact component={Item}></Route>
           <Route component={NotFound} />
         </Switch>
       </Router>

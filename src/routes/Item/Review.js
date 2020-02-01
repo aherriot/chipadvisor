@@ -24,8 +24,12 @@ function Review({
       </StyledRatingLine>
       {description
         .split('\n')
-        .map(paragraph =>
-          paragraph ? <StyledP>{paragraph}</StyledP> : <StyledP>&nbsp;</StyledP>
+        .map((paragraph, i) =>
+          paragraph ? (
+            <StyledP key={i}>{paragraph}</StyledP>
+          ) : (
+            <StyledP key={i}>&nbsp;</StyledP>
+          )
         )}
     </StyledReview>
   )

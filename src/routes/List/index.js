@@ -13,7 +13,8 @@ import Link from 'components/Link'
 import ListCell from './ListCell'
 import NewChipButton from './NewChipButton'
 
-const List = view(({ match: { params: { geoId } } }) => {
+const List = view(({ match: { params: { geo } } }) => {
+  const geoId = parseInt(geo, 10)
   const [chips, setChips] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
@@ -31,6 +32,8 @@ const List = view(({ match: { params: { geoId } } }) => {
 
     fetchChips()
   }, [geoId])
+
+  const geoTitle = geosStore.byId[geoId]?.title ?? ''
 
   let content
   if (!isLoading && chips.length === 0) {
@@ -55,36 +58,45 @@ const List = view(({ match: { params: { geoId } } }) => {
           <StyledP>No chips match filter.</StyledP>
         )}
         {filteredChips.map((chip, i) => (
-          <ListCell key={chip.id} geoId={geoId} rank={chip.ranking} {...chip} />
+          <ListCell
+            key={chip.id}
+            geoId={geoId}
+            geoTitle={geoTitle}
+            rank={chip.ranking}
+            {...chip}
+          />
         ))}
       </>
     )
   }
 
   return (
-    <div>
+    <StyledList>
       <Header />
       <Breadcrumb
-        crumbs={[
-          { url: `/chips`, title: 'Cities' },
-          { title: geosStore.byId[geoId]?.title ?? '' }
-        ]}
+        crumbs={[{ url: `/chips`, title: 'Cities' }, { title: geoTitle }]}
       />
       {content}
       <StyledFooter>
         <p>
           Is your favourite chip missing?{' '}
-          <Link to={`/chips/${geoId}/new`}>Add it</Link>
+          <Link to={`/chips/${geoId}-${encodeURIComponent(geoTitle)}/new`}>
+            Add it!
+          </Link>
         </p>
       </StyledFooter>
-      <NewChipButton geoId={geoId} />
-    </div>
+      <NewChipButton geoId={geoId} geoTitle={geoTitle} />
+    </StyledList>
   )
 })
 
 List.propTypes = {
   match: PropTypes.object.isRequired
 }
+
+const StyledList = styled.div`
+  overflow-y: hidden;
+`
 
 const StyledFilter = styled.div`
   padding: 0 16px 16px;
@@ -94,7 +106,7 @@ const StyledFilter = styled.div`
 `
 
 const StyledFooter = styled.div`
-  padding: 24px 16px;
+  padding: 48px 16px;
   max-width: 400px;
   margin: 0 auto;
   text-align: center;

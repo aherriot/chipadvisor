@@ -9,15 +9,18 @@ import Link from 'components/Link'
 import Review from './Review'
 import geosStore from 'store/geos'
 
-const Item = view(({ match: { params: { geoId, chipId } } }) => {
-  const [chip, setChip] = useState(null)
+const Item = view(({ match: { params: { geo, chip } } }) => {
+  const geoId = parseInt(geo, 10)
+  const chipId = parseInt(chip, 10)
+
+  const [chipData, setChipData] = useState(null)
   const [reviews, setReviews] = useState([])
   useEffect(() => {
     const fetchChip = async () => {
       try {
         const resp = await fetch(`/api/chips/${chipId}`)
         const result = await resp.json()
-        setChip(result.data)
+        setChipData(result.data)
       } catch (e) {
         console.error(e)
       }
@@ -38,9 +41,16 @@ const Item = view(({ match: { params: { geoId, chipId } } }) => {
 
   geosStore.fetch()
 
-  if (!chip) {
+  if (!chipData) {
     return null
   }
+
+  const geoTitle = geosStore.byId[geoId]?.title ?? ''
+  const chipTitle = chipData.title
+  const newReviewUrl =
+    `/chips/` +
+    `${geoId}-${encodeURIComponent(geoTitle)}/` +
+    `${chipId}-${encodeURIComponent(chipTitle)}/review`
 
   let reviewContent
   if (reviews.length !== 0) {
@@ -50,25 +60,24 @@ const Item = view(({ match: { params: { geoId, chipId } } }) => {
           <span>
             {reviews.length + (reviews.length === 1 ? ' review' : ' reviews')}
           </span>
-          <span>Average Rating: {chip.rating.toFixed(1)}</span>
+          <span>Average Rating: {chipData.rating.toFixed(1)}</span>
         </StyledReviewSummary>
 
         <ReviewLinkWrapper>
-          <Link to={`/chips/${geoId}/${chipId}/review`}>Write a Review</Link>
+          <Link to={newReviewUrl}>Write a Review</Link>
         </ReviewLinkWrapper>
         {reviews.map(review => (
           <Review key={review.id} {...review} />
         ))}
         <ReviewLinkWrapper>
-          <Link to={`/chips/${geoId}/${chipId}/review`}>Write a Review</Link>
+          <Link to={newReviewUrl}>Write a Review</Link>
         </ReviewLinkWrapper>
       </>
     )
   } else {
     reviewContent = (
       <div>
-        Be the first to{' '}
-        <Link to={`/chips/${geoId}/${chipId}/review`}>Write a Review</Link>
+        Be the first to <Link to={newReviewUrl}>Write a Review</Link>
       </div>
     )
   }
@@ -79,15 +88,15 @@ const Item = view(({ match: { params: { geoId, chipId } } }) => {
       <Breadcrumb
         crumbs={[
           { url: `/chips`, title: 'Cities' },
-          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title ?? '' },
-          { title: chip.title }
+          { url: `/chips/${geoId}`, title: geoTitle },
+          { title: chipTitle }
         ]}
       />
       <StyledWrapper>
-        <StyleImg src={chip.imgUrl} alt={chip.title} />
+        <StyleImg src={chipData.imgUrl} alt={chipData.title} />
         <StyledContent>
-          <h2>{chip.title}</h2>
-          <p>{chip.description}</p>
+          <h2>{chipData.title}</h2>
+          <p>{chipData.description}</p>
 
           <h2>Reviews</h2>
           {reviewContent}
