@@ -7,6 +7,7 @@ import BubbleRating from 'components/BubbleRating'
 
 function ListCell({
   geoId,
+  geoTitle,
   id,
   title,
   description,
@@ -17,18 +18,28 @@ function ListCell({
 }) {
   return (
     <StyledListCell>
-      <RouterLink to={`/chips/${geoId}/${id}`}>
-        <StyledImg src={imgUrl} alt={title} />
-      </RouterLink>
+      <StyledImg src={imgUrl} alt={title} />
       <StyledContent>
         <StyledTitle>
-          <RouterLink to={`/chips/${geoId}/${id}`}>
+          <RouterLink
+            to={
+              `/chips/` +
+              `${geoId}-${encodeURIComponent(geoTitle)}` +
+              `/${id}-${encodeURIComponent(title)}`
+            }>
             {`${rank}. ${title}`}
           </RouterLink>
         </StyledTitle>
         <StyledRating>
           {rating == null ? (
-            <Link to={`/chips/${geoId}/${id}`}>No Reviews Yet</Link>
+            <Link
+              to={
+                `/chips/` +
+                `${geoId}-${encodeURIComponent(geoTitle)}` +
+                `/${id}-${encodeURIComponent(title)}`
+              }>
+              No Reviews Yet
+            </Link>
           ) : (
             <>
               <BubbleRating rating={rating} />{' '}
@@ -38,14 +49,25 @@ function ListCell({
             </>
           )}
         </StyledRating>
-        <StyledDescription>{description}</StyledDescription>
       </StyledContent>
+      <StyledDescription>
+        {description
+          .split('\n')
+          .map((paragraph, i) =>
+            paragraph ? (
+              <StyledP key={i}>{paragraph}</StyledP>
+            ) : (
+              <StyledP key={i}>&nbsp;</StyledP>
+            )
+          )}
+      </StyledDescription>
     </StyledListCell>
   )
 }
 
 ListCell.propTypes = {
-  geoId: PropTypes.string.isRequired,
+  geoId: PropTypes.number.isRequired,
+  geoTitle: PropTypes.string.isRequired,
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
@@ -58,28 +80,59 @@ ListCell.propTypes = {
 const StyledListCell = styled.div`
   margin: 0 auto;
   margin-bottom: 10px;
-  max-width: 1000px;
-  display: grid;
+  max-width: 800px;
+  width: 100%;
   background-color: #fff;
 
-  @media only screen and (min-width: 600px) {
-    grid-template-columns: 300px auto;
+  display: grid;
+
+  /* large */
+  /* height: 200px; */
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 100px auto;
+  grid-template-areas:
+    'image summary'
+    'image description';
+
+  /* medium */
+  @media only screen and (max-width: 600px) {
+    grid-template-columns: minmax(100px, 150px) auto;
+    grid-template-rows: 100px auto;
+    grid-template-areas:
+      'image summary'
+      'description description';
+  }
+
+  /* small */
+  @media only screen and (max-width: 400px) {
+    grid-template-columns: auto;
+    grid-template-rows: 100px auto minmax(min-content, auto);
+    grid-template-areas:
+      'image'
+      'summary'
+      'description';
   }
 `
 
 const StyledImg = styled.img`
+  grid-area: image;
+
+  max-width: 100%;
+  max-height: 100%;
+  height: 100%;
   width: 100%;
-  height: 200px;
-  background-color: grey;
-  object-fit: cover;
+  background-color: ${({ theme }) => theme.color.white};
+  object-fit: contain;
 `
 
 const StyledContent = styled.div`
+  grid-area: summary;
   padding: 10px;
 `
 
 const StyledTitle = styled.h2`
   margin-top: 4px;
+  font-size: 22px;
 
   & > a {
     text-decoration: none;
@@ -102,9 +155,14 @@ const StyledRating = styled.div`
 `
 
 const StyledDescription = styled.div`
-  margin-top: 10px;
+  grid-area: description;
+  padding: 2px 10px 10px;
   max-height: 100px;
   overflow: hidden;
+`
+
+const StyledP = styled.p`
+  font-size: 14px;
 `
 
 export default ListCell
