@@ -64,6 +64,18 @@ router.post('/', async (req, res) => {
       code: 'MISSING_RATING',
       message: 'Field rating is required.'
     })
+  } else if (
+    rating !== 1 &&
+    rating !== 2 &&
+    rating !== 3 &&
+    rating !== 4 &&
+    rating !== 5
+  ) {
+    return res.status(400).json({
+      status: 400,
+      code: 'INVALID_RATING',
+      message: 'Field rating must be an integer between 1 and 5.'
+    })
   } else if (!description) {
     return res.status(400).json({
       status: 400,

@@ -58,7 +58,7 @@ const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
         body: JSON.stringify({
           userId: window.localStorage.getItem('userId'),
           chipId: chipId,
-          rating: values.rating,
+          rating: parseInt(values.rating, 10),
           description: values.description
         })
       })
@@ -96,11 +96,11 @@ const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
         <StyledField>
           <StyledLabel>Rating</StyledLabel>
           <StyledSelect name='rating' ref={register({ required: 'Required' })}>
-            <option value='1'>1 Bubble</option>
-            <option value='2'>2 Bubbles</option>
-            <option value='3'>3 Bubbles</option>
-            <option value='4'>4 Bubbles</option>
-            <option value='5'>5 Bubbles</option>
+            <option value={1}>1 Bubble</option>
+            <option value={2}>2 Bubbles</option>
+            <option value={3}>3 Bubbles</option>
+            <option value={4}>4 Bubbles</option>
+            <option value={5}>5 Bubbles</option>
           </StyledSelect>
         </StyledField>
         <StyledField>
