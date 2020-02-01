@@ -9,7 +9,7 @@ const KEY_CONSTRAINT = '23505'
 router.get('/', async (req, res) => {
   try {
     const result = await db.query(`select * from users;`)
-    return res.json({ data: result.rows })
+    return res.json({ data: result.rows.map(convertDbRowToUser) })
   } catch (e) {
     return processError(e, res)
   }
@@ -66,5 +66,14 @@ router.post('/', async (req, res) => {
     return processError(e, res)
   }
 })
+
+function convertDbRowToUser(row) {
+  return {
+    id: row.id,
+    username: row.username,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  }
+}
 
 module.exports = router
