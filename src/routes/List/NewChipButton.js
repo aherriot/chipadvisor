@@ -21,6 +21,7 @@ NewChipButton.propTypes = {
 }
 
 const StyledContainer = styled.div`
+  pointer-events: none;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -31,6 +32,7 @@ const StyledContainer = styled.div`
 `
 
 const StyledNewChipButton = styled.div`
+  pointer-events: auto;
   float: right;
   width: 50px;
   height: 50px;
