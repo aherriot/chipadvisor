@@ -23,7 +23,14 @@ const NewItem = view(({ history, match: { params: { geoId } } }) => {
   } = useForm()
 
   if (!window.localStorage.getItem('username')) {
-    return <Redirect push to='/login' />
+    return (
+      <Redirect
+        to={{
+          pathname: '/login',
+          state: { referrer: window.location.pathname }
+        }}
+      />
+    )
   }
 
   geosStore.fetch()

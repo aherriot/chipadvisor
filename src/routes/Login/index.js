@@ -28,7 +28,11 @@ function Login({ history }) {
       window.localStorage.setItem('username', result.data.username)
       window.localStorage.setItem('userId', result.data.id)
 
-      history.goBack()
+      if (history.location.state?.referrer) {
+        history.replace(history.location.state.referrer)
+      } else {
+        history.replace('/')
+      }
     } catch (e) {
       setError('email', 'error', 'Server error')
       console.error(e)

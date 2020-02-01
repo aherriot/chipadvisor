@@ -13,16 +13,24 @@ const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
 
   const [chip, setChip] = useState(null)
   useEffect(() => {
+    let isCancelled = false
+
     const fetchChip = async () => {
       try {
         const resp = await fetch(`/api/chips/${chipId}`)
         const result = await resp.json()
-        setChip(result.data)
+        if (!isCancelled) {
+          setChip(result.data)
+        }
       } catch (e) {
         console.error(e)
       }
     }
     fetchChip()
+
+    return () => {
+      isCancelled = true
+    }
   }, [chipId])
 
   geosStore.fetch()
@@ -30,7 +38,14 @@ const NewReview = view(({ history, match: { params: { geoId, chipId } } }) => {
   const description = watch('description')
 
   if (!window.localStorage.getItem('username')) {
-    return <Redirect push to='/login' />
+    return (
+      <Redirect
+        to={{
+          pathname: '/login',
+          state: { referrer: window.location.pathname }
+        }}
+      />
+    )
   }
 
   const onSubmit = async values => {

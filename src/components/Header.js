@@ -14,7 +14,16 @@ function Header(props) {
         </Link>
       </StyledLeft>
       <div>
-        <Link isLight to={username ? `/profiles/${userId}` : '/login'}>
+        <Link
+          isLight
+          to={
+            username
+              ? `/profiles/${userId}`
+              : {
+                  pathname: '/login',
+                  state: { referrer: window.location.pathname }
+                }
+          }>
           {username || 'Login'}
         </Link>
       </div>
