@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form'
 
 import Header from 'components/Header'
 import TextInput from 'components/TextInput'
+import ErrorMessage from 'components/ErrorMessage'
+import Button from 'components/Button'
 
 function Login({ history }) {
   const { handleSubmit, register, errors, setError } = useForm()
@@ -50,9 +52,9 @@ function Login({ history }) {
             name='email'
             type='email'
             ref={register({ required: 'Required' })}></TextInput>
-          {errors.email && <StyledError>{errors.email.message}</StyledError>}
+          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
         </StyledField>
-        <StyledButton type='submit'>Submit</StyledButton>
+        <Button type='submit'>Submit</Button>
       </StyledForm>
     </StyledLogin>
   )
@@ -75,22 +77,6 @@ const StyledLabel = styled.label`
   display: block;
   font-size: 13px;
   margin: 4px 0;
-`
-
-const StyledError = styled.div`
-  color: red;
-  font-size: 13px;
-  /* font-weight: bold; */
-  margin: 4px 0;
-`
-
-const StyledButton = styled.button`
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: none;
-  background: ${props => props.theme.color.main};
-  color: white;
 `
 
 export default Login

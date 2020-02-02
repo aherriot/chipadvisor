@@ -7,6 +7,8 @@ import { useForm } from 'react-hook-form'
 import Breadcrumb from 'components/Breadcrumb'
 import Header from 'components/Header'
 import TextInput from 'components/TextInput'
+import ErrorMessage from 'components/ErrorMessage'
+import Button from 'components/Button'
 import geosStore from 'store/geos'
 
 // import ImgThumbnail from './ImgThumbnail'
@@ -86,7 +88,7 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
       <Breadcrumb
         crumbs={[
           { url: `/chips`, title: 'Cities' },
-          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title || '' },
+          { url: `/chips/${geoId}`, title: geosStore.byId[geoId]?.title ?? '' },
           { title: 'New Chip' }
         ]}
       />
@@ -99,8 +101,18 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
           <TextInput
             name='title'
             type='text'
-            ref={register({ required: 'Required' })}></TextInput>
-          {errors.title && <StyledError>{errors.title.message}</StyledError>}
+            ref={register({
+              required: 'Required',
+              minLength: {
+                value: 6,
+                message: 'Title must be at least 6 characters.'
+              },
+              maxLength: {
+                value: 30,
+                message: 'Title must be 30 characters or less.'
+              }
+            })}></TextInput>
+          {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
         </StyledField>
         <StyledField>
           <StyledLabel>
@@ -112,7 +124,7 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
             ref={register({
               required: 'Required',
               minLength: {
-                value: 6,
+                value: 60,
                 message: 'Must be at least 60 characters.'
               },
               maxLength: {
@@ -121,7 +133,7 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
               }
             })}></StyledTextarea>
           {errors.description && (
-            <StyledError>{errors.description.message}</StyledError>
+            <ErrorMessage>{errors.description.message}</ErrorMessage>
           )}
         </StyledField>
         <StyledField>
@@ -133,7 +145,7 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
               setValue('image', e.target.files[0])
             }}
           />
-          {errors.image && <StyledError>{errors.image.message}</StyledError>}
+          {errors.image && <ErrorMessage>{errors.image.message}</ErrorMessage>}
         </StyledField>
         {/* <ImgThumbnail file={values.image} /> */}
         <StyledField>
@@ -150,9 +162,9 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
               </option>
             ))}
           </StyledMultiSelect>
-          {errors.geos && <StyledError>{errors.geos.message}</StyledError>}
+          {errors.geos && <ErrorMessage>{errors.geos.message}</ErrorMessage>}
         </StyledField>
-        <StyledButton type='submit'>Submit</StyledButton>
+        <Button type='submit'>Submit</Button>
       </StyledForm>
     </StyledNewItem>
   )
@@ -203,21 +215,4 @@ const StyledMultiSelect = styled.select`
   background-position-y: 50%;
   background-color: white;
 `
-
-const StyledError = styled.div`
-  color: red;
-  font-size: 13px;
-  /* font-weight: bold; */
-  margin: 4px 0;
-`
-
-const StyledButton = styled.button`
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: none;
-  background: ${props => props.theme.color.main};
-  color: white;
-`
-
 export default NewItem

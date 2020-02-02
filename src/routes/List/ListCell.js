@@ -31,7 +31,7 @@ function ListCell({
           <StyledTitle>{`${rank}. ${title}`}</StyledTitle>
           <StyledRating>
             {rating == null ? (
-              'No Reviews Yet'
+              'No reviews yet'
             ) : (
               <>
                 <BubbleRating rating={rating} />{' '}
@@ -124,18 +124,19 @@ const StyledImg = styled.img`
   max-height: 100%;
   height: 100%;
   width: 100%;
-  background-color: ${({ theme }) => theme.color.white};
   object-fit: contain;
+  padding: 6px 0;
+  background-color: ${({ theme }) => theme.color.white};
 `
 
 const StyledContent = styled.div`
   grid-area: summary;
-  padding: 10px;
+  padding: 10px 10px 4px;
 `
 
 const StyledTitle = styled.h2`
   margin-top: 4px;
-  font-size: 22px;
+  font-size: 20px;
 `
 
 const StyledRating = styled.div`
@@ -153,6 +154,7 @@ const StyledDescription = styled.div`
   padding: 2px 10px 10px;
   max-height: 100px;
   overflow: hidden;
+  margin-bottom: 4px;
 `
 
 const StyledP = styled.p`

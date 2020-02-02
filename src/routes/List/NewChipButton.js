@@ -37,8 +37,8 @@ const StyledNewChipButton = styled.div`
   width: 50px;
   height: 50px;
 
-  background: ${({ theme }) => theme.color.main};
-  color: white;
+  background: ${({ theme }) => theme.color.green};
+  color: ${({ theme }) => theme.color.black};
   box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.5);
 
   &:hover,

@@ -1,11 +1,13 @@
-// import React from 'react'
+import React from 'react'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-const StyledLink = styled(ReactRouterLink)`
+const StyledLink = styled(({ isDark, ...rest }) => (
+  <ReactRouterLink {...rest} />
+))`
   text-decoration: none;
-  color: ${({ isLight, theme }) =>
-    isLight ? theme.color.white : theme.color.main};
+  color: ${({ isDark, theme }) =>
+    isDark ? theme.color.black : theme.color.green};
   font-weight: bold;
 
   &:hover,
@@ -13,9 +15,5 @@ const StyledLink = styled(ReactRouterLink)`
     text-decoration: underline;
   }
 `
-
-// function Link(props) {
-//   return <StyledLink {...props} />
-// }
 
 export default StyledLink

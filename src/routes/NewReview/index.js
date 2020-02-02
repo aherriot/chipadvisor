@@ -6,6 +6,7 @@ import { useForm, ErrorMessage } from 'react-hook-form'
 
 import Breadcrumb from 'components/Breadcrumb'
 import Header from 'components/Header'
+import Button from 'components/Button'
 import geosStore from 'store/geos'
 
 const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
@@ -88,7 +89,12 @@ const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
       console.error(e)
     }
   }
-
+  let descriptionTitle
+  if (description?.length < 100) {
+    descriptionTitle = `(${description?.length} out of at least 60 characters)`
+  } else if (description?.length > 200) {
+    descriptionTitle = `(${description?.length} out of a maximum of 500 characters)`
+  }
   return (
     <StyledNewReview>
       <Header />
@@ -113,9 +119,7 @@ const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
           </StyledSelect>
         </StyledField>
         <StyledField>
-          <StyledLabel>
-            Review ({description?.length} of out at least 60 characters)
-          </StyledLabel>
+          <StyledLabel>Review {descriptionTitle}</StyledLabel>
           <StyledTextarea
             name='description'
             ref={register({
@@ -123,9 +127,9 @@ const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
               // minLength: 100,
               // maxLength: 5
             })}></StyledTextarea>
-          <ErrorMessage as={StyledError} errors={errors} name='description' />
+          <ErrorMessage as={ErrorMessage} errors={errors} name='description' />
         </StyledField>
-        <StyledButton type='submit'>Submit</StyledButton>
+        <Button type='submit'>Submit</Button>
       </StyledForm>
     </StyledNewReview>
   )
@@ -175,21 +179,4 @@ const StyledTextarea = styled.textarea`
   border-radius: 4px;
   resize: vertical;
 `
-
-const StyledError = styled.div`
-  color: red;
-  font-size: 13px;
-  /* font-weight: bold; */
-  margin: 4px 0;
-`
-
-const StyledButton = styled.button`
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: none;
-  background: ${props => props.theme.color.main};
-  color: white;
-`
-
 export default NewReview

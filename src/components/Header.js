@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import Link from 'components/Link'
 
 function Header(props) {
@@ -8,14 +8,14 @@ function Header(props) {
   return (
     <StyledHeader>
       <StyledLeft>
-        <StyledLogo src='/potato128.png' alt='ChipAdvisor Logo' />
-        <Link isLight to='/'>
-          ChipAdvisor
+        <StyledLogo src='/potato128.png' alt='Chipadvisor Logo' />
+        <Link isDark to='/'>
+          Chipadvisor
         </Link>
       </StyledLeft>
       <div>
         <Link
-          isLight
+          isDark
           to={
             username
               ? `/profiles/${userId}`
@@ -34,8 +34,11 @@ function Header(props) {
 Header.propTypes = {}
 
 const StyledHeader = styled.header`
-  color: ${({ theme }) => theme.color.white};
-  background-color: ${({ theme }) => theme.color.main};
+  ${({ theme }) => css`
+    color: ${theme.color.black};
+    background-color: ${theme.color.white};
+    border-bottom: 1px solid ${theme.color.grey};
+  `}
 
   height: 60px;
 
@@ -48,11 +51,15 @@ const StyledHeader = styled.header`
 const StyledLeft = styled.div`
   display: flex;
   align-items: center;
+  font-size: 20px;
 `
 
 const StyledLogo = styled.img`
-  width: 24px;
+  width: 36px;
   margin-right: 8px;
+  border-radius: 50%;
+  padding: 4px;
+  background-color: ${({ theme }) => theme.color.green};
 `
 
 export default Header

@@ -9,7 +9,7 @@ const TextInput = styled.input`
 
   &:focus {
     outline: none;
-    border: 2px solid ${props => props.theme.color.main};
+    border: 2px solid ${props => props.theme.color.green};
   }
 `
 
