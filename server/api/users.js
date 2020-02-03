@@ -15,6 +15,24 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/:userId', async (req, res) => {
+  try {
+    const result = await db.query(`select * from users where id = $1;`, [
+      req.params.userId
+    ])
+    if (result.rows.length === 1) {
+      return res.json({ data: convertDbRowToUser(result.rows[0]) })
+    } else {
+      return res
+        .status(404)
+        .json({ status: 404, code: 'NOT_FOUND', error: 'User not found' })
+    }
+  } catch (e) {
+    console.log(e)
+    return processError(e, res)
+  }
+})
+
 router.post('/', async (req, res) => {
   const { username, email } = req.body
   if (!username) {
@@ -72,7 +90,8 @@ function convertDbRowToUser(row) {
     id: row.id,
     username: row.username,
     createdAt: row.created_at,
-    updatedAt: row.updated_at
+    updatedAt: row.updated_at,
+    lastLogin: row.last_login_at
   }
 }
 

@@ -29,8 +29,9 @@ router.get('/byUserId/:userId', async (req, res) => {
   if (userId) {
     try {
       let result = await db.query(
-        `select r.*
+        `select r.*, c.title as chip_title
         from reviews r
+        left join chips c on c.id = r.chip_id
         where r.user_id = $1
         order by r.created_at;`,
         [userId]
@@ -82,11 +83,11 @@ router.post('/', async (req, res) => {
       code: 'MISSING_DESCRIPTION',
       message: 'Field description is required.'
     })
-  } else if (description.length < 60 || description.length > 500) {
+  } else if (description.length < 60 || description.length > 1000) {
     return res.status(400).json({
       status: 400,
       code: 'INVALID_DESCRIPTION',
-      message: 'Field description must be between 60 and 500 characters.'
+      message: 'Field description must be between 60 and 1000 characters.'
     })
   }
 
@@ -119,6 +120,7 @@ function convertDbRowToReview(row) {
     userId: row.user_id,
     username: row.username,
     chipId: row.chip_id,
+    chipTitle: row.chip_title,
     rating: parseFloat(row.rating),
     description: row.description,
     createdAt: row.created_at,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { view } from 'react-easy-state'
@@ -9,29 +9,19 @@ import Header from 'components/Header'
 import Breadcrumb from 'components/Breadcrumb'
 import TextInput from 'components/TextInput'
 import Link from 'components/Link'
+import ErrorMessage from 'components/ErrorMessage'
+import useApi from 'utils/useApi'
 
 import ListCell from './ListCell'
 import NewChipButton from './NewChipButton'
 
 const List = view(({ match: { params: { geo } } }) => {
   const geoId = parseInt(geo, 10)
-  const [chips, setChips] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
 
   geosStore.fetch()
 
-  useEffect(() => {
-    setIsLoading(true)
-    const fetchChips = async () => {
-      const resp = await fetch(`/api/chips/?geoId=${geoId}`)
-      const result = await resp.json()
-      setChips(result.data)
-      setIsLoading(false)
-    }
-
-    fetchChips()
-  }, [geoId])
+  const [chips, isLoading, error] = useApi(`/api/chips/?geoId=${geoId}`, [])
 
   const geoTitle = geosStore.byId[geoId]?.title ?? ''
 
@@ -39,7 +29,9 @@ const List = view(({ match: { params: { geo } } }) => {
   if (!isLoading && chips.length === 0) {
     content = <StyledP>No Chips for this geo</StyledP>
   } else if (isLoading) {
-    content = <StyledP>Loading</StyledP>
+    content = <StyledP>Loading...</StyledP>
+  } else if (error) {
+    content = <ErrorMessage>{JSON.stringify(error)}</ErrorMessage>
   } else {
     const filteredChips = chips.filter(chip =>
       chip.title.toLowerCase().includes(searchText.toLowerCase())

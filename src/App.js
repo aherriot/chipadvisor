@@ -40,7 +40,7 @@ function App() {
           <Route path='/' exact component={Home}></Route>
           <Route path='/chips' exact component={Home}></Route>
           <Route path='/login' exact component={Login}></Route>
-          <Route path='/profiles/:userId' exact component={Profile}></Route>
+          <Route path='/profiles/:user' exact component={Profile}></Route>
           <Route path='/users/' exact component={User}></Route>
           <Route path='/chips/:geo' exact component={List}></Route>
           <Route path='/chips/:geo/new' exact component={NewItem}></Route>

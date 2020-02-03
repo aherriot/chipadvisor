@@ -18,7 +18,7 @@ function Header(props) {
           isDark
           to={
             username
-              ? `/profiles/${userId}`
+              ? `/profiles/${userId}-${username}`
               : {
                   pathname: '/login',
                   state: { referrer: window.location.pathname }

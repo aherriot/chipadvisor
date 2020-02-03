@@ -7,24 +7,10 @@ function List({
     params: { userId }
   }
 }) {
-  const [data, setData] = useState({ reviews: [] })
-
-  useEffect(() => {
-    window.setTimeout(() => {
-      setData({ reviews: [] })
-    }, 0)
-    setData({ reviews: [] })
-  }, [userId])
-
   return (
     <div>
       <Header />
       {userId}
-      {data.reviews
-        .filter(review => review.userId === Number(userId))
-        .map(review => (
-          <div>{JSON.stringify(review)}</div>
-        ))}
     </div>
   )
 }

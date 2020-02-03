@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { view } from 'react-easy-state'
@@ -6,6 +6,10 @@ import { view } from 'react-easy-state'
 import Header from 'components/Header'
 import Breadcrumb from 'components/Breadcrumb'
 import Link from 'components/Link'
+import ErrorMessage from 'components/ErrorMessage'
+
+import useApi from 'utils/useApi'
+
 import Review from './Review'
 import geosStore from 'store/geos'
 
@@ -13,32 +17,11 @@ const Item = view(({ match: { params: { geo, chip } } }) => {
   const geoId = parseInt(geo, 10)
   const chipId = parseInt(chip, 10)
 
-  const [chipData, setChipData] = useState(null)
-  const [reviews, setReviews] = useState([])
-  useEffect(() => {
-    const fetchChip = async () => {
-      try {
-        const resp = await fetch(`/api/chips/${chipId}`)
-        const result = await resp.json()
-        setChipData(result.data)
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    fetchChip()
-
-    const fetchReviews = async () => {
-      try {
-        const resp = await fetch(`/api/reviews?chipId=${chipId}`)
-        const result = await resp.json()
-        setReviews(result.data)
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    fetchReviews()
-  }, [chipId])
-
+  const [chipData, chipIsLoading, chipError] = useApi(`/api/chips/${chipId}`)
+  const [reviewsData, reviewsAreLoading, reviewsError] = useApi(
+    `/api/reviews?chipId=${chipId}`,
+    []
+  )
   geosStore.fetch()
 
   if (!chipData) {
@@ -53,12 +36,13 @@ const Item = view(({ match: { params: { geo, chip } } }) => {
     `${chipId}-${encodeURIComponent(chipTitle)}/review`
 
   let reviewContent
-  if (reviews.length !== 0) {
+  if (reviewsData.length !== 0) {
     reviewContent = (
       <>
         <StyledReviewSummary>
           <span>
-            {reviews.length + (reviews.length === 1 ? ' review' : ' reviews')}
+            {reviewsData.length +
+              (reviewsData.length === 1 ? ' review' : ' reviews')}
           </span>
           <span>Average Rating: {chipData.rating.toFixed(1)}</span>
         </StyledReviewSummary>
@@ -66,7 +50,7 @@ const Item = view(({ match: { params: { geo, chip } } }) => {
         <ReviewLinkWrapper>
           <Link to={newReviewUrl}>Write a Review</Link>
         </ReviewLinkWrapper>
-        {reviews.map(review => (
+        {reviewsData.map(review => (
           <Review key={review.id} {...review} />
         ))}
         <ReviewLinkWrapper>
@@ -82,6 +66,27 @@ const Item = view(({ match: { params: { geo, chip } } }) => {
     )
   }
 
+  let content
+  if (chipIsLoading || reviewsAreLoading) {
+    content = <div>loading...</div>
+  } else if (chipError) {
+    content = <ErrorMessage>{JSON.stringify(chipError)}</ErrorMessage>
+  } else if (reviewsError) {
+    content = <ErrorMessage>{JSON.stringify(reviewsError)}</ErrorMessage>
+  } else if (chipData) {
+    content = (
+      <>
+        <StyleImg src={chipData.imgUrl} alt={chipData.title} />
+        <StyledContent>
+          <h2>{chipData.title}</h2>
+          <p>{chipData.description}</p>
+          <h2>Reviews</h2>
+          {reviewContent}
+        </StyledContent>
+      </>
+    )
+  }
+
   return (
     <StyledItem>
       <Header />
@@ -92,16 +97,7 @@ const Item = view(({ match: { params: { geo, chip } } }) => {
           { title: chipTitle }
         ]}
       />
-      <StyledWrapper>
-        <StyleImg src={chipData.imgUrl} alt={chipData.title} />
-        <StyledContent>
-          <h2>{chipData.title}</h2>
-          <p>{chipData.description}</p>
-
-          <h2>Reviews</h2>
-          {reviewContent}
-        </StyledContent>
-      </StyledWrapper>
+      <StyledWrapper>{content}</StyledWrapper>
     </StyledItem>
   )
 })
