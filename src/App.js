@@ -11,7 +11,6 @@ import List from './routes/List'
 import Item from './routes/Item'
 import NewItem from './routes/NewItem'
 import NewReview from './routes/NewReview'
-import User from './routes/User'
 import NotFound from './routes/NotFound'
 
 const GlobalStyle = createGlobalStyle`
@@ -41,7 +40,6 @@ function App() {
           <Route path='/chips' exact component={Home}></Route>
           <Route path='/login' exact component={Login}></Route>
           <Route path='/profiles/:user' exact component={Profile}></Route>
-          <Route path='/users/' exact component={User}></Route>
           <Route path='/chips/:geo' exact component={List}></Route>
           <Route path='/chips/:geo/new' exact component={NewItem}></Route>
           <Route

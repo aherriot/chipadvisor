@@ -18,6 +18,7 @@ const Item = view(({ match: { params: { geo, chip } } }) => {
   const chipId = parseInt(chip, 10)
 
   const [chipData, chipIsLoading, chipError] = useApi(`/api/chips/${chipId}`)
+
   const [reviewsData, reviewsAreLoading, reviewsError] = useApi(
     `/api/reviews?chipId=${chipId}`,
     []
@@ -76,10 +77,22 @@ const Item = view(({ match: { params: { geo, chip } } }) => {
   } else if (chipData) {
     content = (
       <>
-        <StyleImg src={chipData.imgUrl} alt={chipData.title} />
+        <a href={chipData.imgUrl}>
+          <StyleImg src={chipData.imgUrl} alt={chipData.title} />
+        </a>
         <StyledContent>
           <h2>{chipData.title}</h2>
-          <p>{chipData.description}</p>
+          <StyledDescription>
+            {chipData.description
+              .split('\n')
+              .map((paragraph, i) =>
+                paragraph ? (
+                  <StyledP key={chipData.id + i}>{paragraph}</StyledP>
+                ) : (
+                  <StyledP key={chipData.id + i}>&nbsp;</StyledP>
+                )
+              )}
+          </StyledDescription>
           <h2>Reviews</h2>
           {reviewContent}
         </StyledContent>
@@ -117,13 +130,20 @@ const StyledWrapper = styled.div`
 
 const StyleImg = styled.img`
   width: 100%;
-  object-fit: cover;
-  height: 300px;
+  margin: 0 auto;
+  padding: 8px;
+  object-fit: contain;
+  height: 200px;
+  background: ${({ theme }) => theme.color.white};
 `
 
 const StyledContent = styled.div`
   padding: 8px 8px 0;
 `
+
+const StyledDescription = styled.div``
+
+const StyledP = styled.p``
 
 const StyledReviewSummary = styled.div`
   display: flex
