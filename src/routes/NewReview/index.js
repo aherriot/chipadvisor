@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { view } from 'react-easy-state'
 import { Redirect } from 'react-router-dom'
-import { useForm, ErrorMessage } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 
 import Breadcrumb from 'components/Breadcrumb'
 import Header from 'components/Header'
 import Button from 'components/Button'
+import ErrorMessage from 'components/ErrorMessage'
 import geosStore from 'store/geos'
 
 const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
@@ -93,7 +94,7 @@ const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
   if (description?.length < 100) {
     descriptionTitle = `(${description?.length} out of at least 60 characters)`
   } else if (description?.length > 200) {
-    descriptionTitle = `(${description?.length} out of a maximum of 500 characters)`
+    descriptionTitle = `(${description?.length} out of a maximum of 1000 characters)`
   }
   return (
     <StyledNewReview>
@@ -123,11 +124,19 @@ const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
           <StyledTextarea
             name='description'
             ref={register({
-              required: 'Required'
-              // minLength: 100,
-              // maxLength: 5
+              required: 'Required',
+              minLength: {
+                value: 60,
+                message: 'Minimum 60 characters'
+              },
+              maxLength: {
+                value: 1000,
+                message: 'Maximum 1000 characters.'
+              }
             })}></StyledTextarea>
-          <ErrorMessage as={ErrorMessage} errors={errors} name='description' />
+          {errors.description && (
+            <ErrorMessage>{errors.description.message}</ErrorMessage>
+          )}
         </StyledField>
         <Button type='submit'>Submit</Button>
       </StyledForm>

@@ -34,6 +34,7 @@ Breadcrumb.propTypes = {
 
 const StyledBreadcrumb = styled.div`
   padding: 16px 16px;
+  /* border-bottom: 1px solid ${({ theme }) => theme.color.grey}; */
   & > ul {
     list-style: none;
   }

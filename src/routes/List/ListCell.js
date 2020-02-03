@@ -31,13 +31,13 @@ function ListCell({
           <StyledTitle>{`${rank}. ${title}`}</StyledTitle>
           <StyledRating>
             {rating == null ? (
-              'No reviews yet'
+              <StyledHighligh>No reviews yet</StyledHighligh>
             ) : (
               <>
                 <BubbleRating rating={rating} />{' '}
-                <span>
+                <StyledRatingDescription>
                   {numOfReviews} {numOfReviews !== 1 ? ' Reviews' : ' Review'}
-                </span>
+                </StyledRatingDescription>
               </>
             )}
           </StyledRating>
@@ -142,11 +142,12 @@ const StyledTitle = styled.h2`
 const StyledRating = styled.div`
   display: flex;
   align-items: center;
-  & > span {
-    margin-left: 8px;
-    margin-bottom: 2px;
-    font-size: 14px;
-  }
+`
+
+const StyledRatingDescription = styled.span`
+  margin-left: 8px;
+  margin-bottom: 2px;
+  font-size: 14px;
 `
 
 const StyledDescription = styled.div`
@@ -159,6 +160,10 @@ const StyledDescription = styled.div`
 
 const StyledP = styled.p`
   font-size: 14px;
+`
+const StyledHighligh = styled.span`
+  font-weight: bold;
+  color: ${({ theme }) => theme.color.green};
 `
 
 export default ListCell

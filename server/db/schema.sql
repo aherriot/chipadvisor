@@ -43,7 +43,7 @@ create table reviews (
 	user_id integer references users not null,
 	chip_id integer references chips not null,
 	rating integer not null,
-	description varchar(500) not null,
+	description varchar(1000) not null,
 	created_at timestamptz not null default now(),
 	updated_at timestamptz,
 	unique(user_id, chip_id)
