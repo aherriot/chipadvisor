@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components/macro'
 import { Link as RouterLink } from 'react-router-dom'
 import BubbleRating from 'components/BubbleRating'
+import UserText from 'components/UserText'
 
 function ListCell({
   geoId,
@@ -43,15 +44,7 @@ function ListCell({
           </StyledRating>
         </StyledContent>
         <StyledDescription>
-          {description
-            .split('\n')
-            .map((paragraph, i) =>
-              paragraph ? (
-                <StyledP key={i}>{paragraph}</StyledP>
-              ) : (
-                <StyledP key={i}>&nbsp;</StyledP>
-              )
-            )}
+          <UserText>{description}</UserText>
         </StyledDescription>
       </StyledListCell>
     </RouterLink>
@@ -158,9 +151,6 @@ const StyledDescription = styled.div`
   margin-bottom: 4px;
 `
 
-const StyledP = styled.p`
-  font-size: 14px;
-`
 const StyledHighligh = styled.span`
   font-weight: bold;
   color: ${({ theme }) => theme.color.green};

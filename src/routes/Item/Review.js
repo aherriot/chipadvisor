@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import BubbleRating from 'components/BubbleRating'
 import Link from 'components/Link'
+import UserText from 'components/UserText'
 
 function Review({
   id,
@@ -22,15 +23,7 @@ function Review({
       <StyledRatingLine>
         <BubbleRating rating={rating} />
       </StyledRatingLine>
-      {description
-        .split('\n')
-        .map((paragraph, i) =>
-          paragraph ? (
-            <StyledP key={i}>{paragraph}</StyledP>
-          ) : (
-            <StyledP key={i}>&nbsp;</StyledP>
-          )
-        )}
+      <UserText>{description}</UserText>
     </StyledReview>
   )
 }
@@ -58,10 +51,6 @@ const StyledAuthorLine = styled.div`
 
 const StyledRatingLine = styled.div`
   margin: 8px 0;
-`
-
-const StyledP = styled.p`
-  font-size: 14px;
 `
 
 const StyledDate = styled.span`

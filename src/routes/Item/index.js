@@ -5,12 +5,12 @@ import { view } from 'react-easy-state'
 
 import Header from 'components/Header'
 import Breadcrumb from 'components/Breadcrumb'
-import Link from 'components/Link'
 import ErrorMessage from 'components/ErrorMessage'
+import UserText from 'components/UserText'
 
 import useApi from 'utils/useApi'
 
-import Review from './Review'
+import ReviewSection from './ReviewSection'
 import geosStore from 'store/geos'
 
 const Item = view(({ match: { params: { geo, chip } } }) => {
@@ -31,41 +31,6 @@ const Item = view(({ match: { params: { geo, chip } } }) => {
 
   const geoTitle = geosStore.byId[geoId]?.title ?? ''
   const chipTitle = chipData.title
-  const newReviewUrl =
-    `/chips/` +
-    `${geoId}-${encodeURIComponent(geoTitle)}/` +
-    `${chipId}-${encodeURIComponent(chipTitle)}/review`
-
-  let reviewContent
-  if (reviewsData.length !== 0) {
-    reviewContent = (
-      <>
-        <StyledReviewSummary>
-          <span>
-            {reviewsData.length +
-              (reviewsData.length === 1 ? ' review' : ' reviews')}
-          </span>
-          <span>Average Rating: {chipData.rating.toFixed(1)}</span>
-        </StyledReviewSummary>
-
-        <ReviewLinkWrapper>
-          <Link to={newReviewUrl}>Write a Review</Link>
-        </ReviewLinkWrapper>
-        {reviewsData.map(review => (
-          <Review key={review.id} {...review} />
-        ))}
-        <ReviewLinkWrapper>
-          <Link to={newReviewUrl}>Write a Review</Link>
-        </ReviewLinkWrapper>
-      </>
-    )
-  } else {
-    reviewContent = (
-      <div>
-        Be the first to <Link to={newReviewUrl}>Write a Review</Link>
-      </div>
-    )
-  }
 
   let content
   if (chipIsLoading || reviewsAreLoading) {
@@ -83,18 +48,16 @@ const Item = view(({ match: { params: { geo, chip } } }) => {
         <StyledContent>
           <h2>{chipData.title}</h2>
           <StyledDescription>
-            {chipData.description
-              .split('\n')
-              .map((paragraph, i) =>
-                paragraph ? (
-                  <StyledP key={chipData.id + i}>{paragraph}</StyledP>
-                ) : (
-                  <StyledP key={chipData.id + i}>&nbsp;</StyledP>
-                )
-              )}
+            <UserText>{chipData.description}</UserText>
           </StyledDescription>
-          <h2>Reviews</h2>
-          {reviewContent}
+          <ReviewSection
+            reviewsData={reviewsData}
+            rating={chipData.rating}
+            geoId={geoId}
+            geoTitle={geoTitle}
+            chipId={chipId}
+            chipTitle={chipTitle}
+          />
         </StyledContent>
       </>
     )
@@ -142,18 +105,5 @@ const StyledContent = styled.div`
 `
 
 const StyledDescription = styled.div``
-
-const StyledP = styled.p``
-
-const StyledReviewSummary = styled.div`
-  display: flex
-  justify-content: space-between;
-  font-size: 14px;
-`
-
-const ReviewLinkWrapper = styled.div`
-  text-align: right;
-  margin: 16px 0;
-`
 
 export default Item
