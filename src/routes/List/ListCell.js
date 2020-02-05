@@ -17,37 +17,39 @@ function ListCell({
   imgUrl
 }) {
   return (
-    <RouterLink
-      to={
-        `/chips/` +
-        `${geoId}-${encodeURIComponent(geoTitle)}` +
-        `/${id}-${encodeURIComponent(title)}`
-      }
-      css={`
-        text-decoration: none;
-      `}>
-      <StyledListCell>
-        <StyledImg src={imgUrl} alt={title} />
-        <StyledContent>
-          <StyledTitle>{`${rank}. ${title}`}</StyledTitle>
-          <StyledRating>
-            {rating == null ? (
-              <StyledHighligh>No reviews yet</StyledHighligh>
-            ) : (
-              <>
-                <BubbleRating rating={rating} />{' '}
-                <StyledRatingDescription>
-                  {numOfReviews} {numOfReviews !== 1 ? ' Reviews' : ' Review'}
-                </StyledRatingDescription>
-              </>
-            )}
-          </StyledRating>
-        </StyledContent>
-        <StyledDescription>
-          <UserText>{description}</UserText>
-        </StyledDescription>
-      </StyledListCell>
-    </RouterLink>
+    <StyledWrapper>
+      <RouterLink
+        to={
+          `/chips/` +
+          `${geoId}-${encodeURIComponent(geoTitle)}` +
+          `/${id}-${encodeURIComponent(title)}`
+        }
+        css={`
+          text-decoration: none;
+        `}>
+        <StyledListCell>
+          <StyledImg src={imgUrl} alt={title} />
+          <StyledContent>
+            <StyledTitle>{`${rank}. ${title}`}</StyledTitle>
+            <StyledRating>
+              {rating == null ? (
+                <StyledHighligh>No reviews yet</StyledHighligh>
+              ) : (
+                <>
+                  <BubbleRating rating={rating} />{' '}
+                  <StyledRatingDescription>
+                    {numOfReviews} {numOfReviews !== 1 ? ' Reviews' : ' Review'}
+                  </StyledRatingDescription>
+                </>
+              )}
+            </StyledRating>
+          </StyledContent>
+          <StyledDescription>
+            <UserText>{description}</UserText>
+          </StyledDescription>
+        </StyledListCell>
+      </RouterLink>
+    </StyledWrapper>
   )
 }
 
@@ -63,10 +65,14 @@ ListCell.propTypes = {
   imgUrl: PropTypes.string.isRequired
 }
 
-const StyledListCell = styled.div`
+const StyledWrapper = styled.div`
+  width: 100%;
   margin: 0 auto;
-  margin-bottom: 10px;
   max-width: 800px;
+  margin-bottom: 10px;
+`
+
+const StyledListCell = styled.div`
   width: 100%;
   background-color: #fff;
 
