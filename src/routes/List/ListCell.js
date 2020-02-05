@@ -98,7 +98,7 @@ const StyledListCell = styled.div`
 
   /* medium */
   @media only screen and (max-width: 600px) {
-    grid-template-columns: minmax(100px, 150px) auto;
+    grid-template-columns: minmax(100px, 12px) auto;
     grid-template-rows: 100px auto;
     grid-template-areas:
       'image summary'
@@ -134,8 +134,12 @@ const StyledContent = styled.div`
 `
 
 const StyledTitle = styled.h2`
-  margin-top: 4px;
+  margin-top: 12px;
   font-size: 20px;
+
+  @media only screen and (max-width: 400px) {
+    margin-top: 0px;
+  }
 `
 
 const StyledRating = styled.div`
