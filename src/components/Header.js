@@ -8,7 +8,7 @@ function Header(props) {
   return (
     <StyledHeader>
       <StyledLeft>
-        <StyledLogo src='/potato128.png' alt='Chipadvisor Logo' />
+        <StyledLogo src='/chipadvisor-logo.png' alt='Chipadvisor Logo' />
         <Link isDark to='/'>
           Chipadvisor
         </Link>
@@ -56,10 +56,7 @@ const StyledLeft = styled.div`
 
 const StyledLogo = styled.img`
   width: 36px;
-  margin-right: 8px;
-  border-radius: 50%;
-  padding: 4px;
-  background-color: ${({ theme }) => theme.color.green};
+  margin-right: 4px;
 `
 
 export default Header
