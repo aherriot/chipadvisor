@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { view } from 'react-easy-state'
@@ -7,17 +7,15 @@ import geosStore from 'store/geos'
 
 import Header from 'components/Header'
 import Breadcrumb from 'components/Breadcrumb'
-import TextInput from 'components/TextInput'
 import Link from 'components/Link'
 import ErrorMessage from 'components/ErrorMessage'
 import useApi from 'utils/useApi'
 
-import ListCell from './ListCell'
+import ListCells from './ListCells'
 import NewChipButton from './NewChipButton'
 
 const List = view(({ match: { params: { geo } } }) => {
   const geoId = parseInt(geo, 10)
-  const [searchText, setSearchText] = useState('')
 
   geosStore.fetch()
 
@@ -33,33 +31,7 @@ const List = view(({ match: { params: { geo } } }) => {
   } else if (error) {
     content = <ErrorMessage>{JSON.stringify(error)}</ErrorMessage>
   } else {
-    const filteredChips = chips.filter(chip =>
-      chip.title.toLowerCase().includes(searchText.toLowerCase())
-    )
-
-    content = (
-      <>
-        <StyledFilter>
-          <TextInput
-            placeholder='Filter Chips'
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-          />
-        </StyledFilter>
-        {filteredChips.length === 0 && (
-          <StyledP>No chips match filter.</StyledP>
-        )}
-        {filteredChips.map((chip, i) => (
-          <ListCell
-            key={chip.id}
-            geoId={geoId}
-            geoTitle={geoTitle}
-            rank={chip.ranking}
-            {...chip}
-          />
-        ))}
-      </>
-    )
+    content = <ListCells chips={chips} geoId={geoId} geoTitle={geoTitle} />
   }
 
   return (
@@ -88,13 +60,6 @@ List.propTypes = {
 
 const StyledList = styled.div`
   overflow-y: hidden;
-`
-
-const StyledFilter = styled.div`
-  padding: 0 16px 16px;
-  max-width: 400px;
-  margin: 0 auto;
-  text-align: center;
 `
 
 const StyledFooter = styled.div`
