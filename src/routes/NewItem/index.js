@@ -49,36 +49,50 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
   const onSubmit = async values => {
     const formData = new FormData()
     formData.append('userId', window.localStorage.getItem('userId'))
-    formData.append('title', values.title)
-    formData.append('description', values.description)
+    formData.append('title', values.title.trim())
+    formData.append('description', values.description.trim())
     formData.append('image', values.image)
     formData.append('geos', values.geos)
 
-    let resp
+    let resp, result
     try {
       resp = await fetch(`/api/chips`, {
         method: 'POST',
         body: formData
       })
     } catch (e) {
-      console.error(e)
-      setError('title', 'error', e?.toString())
-      return
+      result = e
     }
 
     try {
-      await resp.json()
+      result = await resp.json()
     } catch (e) {
-      console.error(e)
-      setError('title', 'error', e?.toString())
-      return
+      result = e
     }
 
     if (resp.ok) {
       history.goBack()
     } else {
-      setError('title', 'error', 'Internal Server Error')
-      return
+      if (
+        result?.code === 'MISSING_TITLE' ||
+        result?.code === 'INVALID_TITLE'
+      ) {
+        setError('title', 'error', result.message)
+      } else if (
+        result?.code === 'MISSING_DESCRIPTION' ||
+        result?.code === 'INVALID_DESCRIPTION'
+      ) {
+        setError('description', 'error', result.message)
+      } else if (
+        result?.code === 'MISSING_GEOS' ||
+        result?.code === 'INVALID_GEOS'
+      ) {
+        setError('geos', 'error', result.message)
+      } else if (result?.code === 'MISSING_IMAGE') {
+        setError('image', 'error', result.message)
+      } else {
+        setError('generic', 'error', result || 'Unknown error')
+      }
     }
   }
 
@@ -108,8 +122,8 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
                 message: 'Title must be at least 6 characters.'
               },
               maxLength: {
-                value: 30,
-                message: 'Title must be 30 characters or less.'
+                value: 40,
+                message: 'Title must be 40 characters or less.'
               }
             })}></TextInput>
           {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
@@ -164,6 +178,9 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
           </StyledMultiSelect>
           {errors.geos && <ErrorMessage>{errors.geos.message}</ErrorMessage>}
         </StyledField>
+        {errors.general && (
+          <ErrorMessage>{errors.general.message}</ErrorMessage>
+        )}
         <Button type='submit'>Submit</Button>
       </StyledForm>
     </StyledNewItem>

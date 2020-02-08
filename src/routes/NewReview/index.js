@@ -66,7 +66,7 @@ const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
           userId: window.localStorage.getItem('userId'),
           chipId: chipId,
           rating: parseInt(values.rating, 10),
-          description: values.description
+          description: values.description.trim()
         })
       })
       const result = await resp.json()
@@ -86,7 +86,11 @@ const NewReview = view(({ history, match: { params: { geo, chip } } }) => {
         )
       }
     } catch (e) {
-      setError('description', 'error', 'Internal Server Error')
+      if (e?.code === 'MISSING_TITLE' || e?.code === 'INVALID_TITLE') {
+        setError('title', 'error', e.message)
+      } else {
+        setError('description', 'error', 'Internal Server Error')
+      }
       console.error(e)
     }
   }

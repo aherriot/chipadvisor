@@ -160,100 +160,114 @@ const imgUpload = multer({
     const ext = path.extname(file.originalname)
     if (
       (ext === '.png' && file.mimetype === 'image/png') ||
-      (ext === '.jpg' && file.mimetype === 'image/jpg') ||
-      (ext === '.jpeg' && file.mimetype === 'image/jpeg')
+      ((ext === '.jpg' || ext === '.jpeg') &&
+        (file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'))
     ) {
       return cb(null, true)
     }
 
-    cb(null, false)
+    cb({ code: 'UNSUPPORTED_FILE_TYPE' }, false)
   }
 }).single('image')
 
-router.post('/', imgUpload, async (req, res) => {
-  const { userId, title, description } = req.body
-  const image = req.file
-  const geos = req.body.geos
-    ? req.body.geos.split(',').map(geo => parseInt(geo, 10))
-    : null
+router.post('/', async (req, res) => {
+  return imgUpload(req, res, async err => {
+    if (err) {
+      if (err.code === 'UNSUPPORTED_FILE_TYPE') {
+        return res.status(400).json({
+          status: 400,
+          code: 'INVALID_TITLE',
+          message: 'Image must be a JPEG or PNG.'
+        })
+      } else {
+        return processError(err, res)
+      }
+    }
 
-  if (!userId) {
-    return res.status(400).json({
-      status: 400,
-      code: 'MISSING_USER_ID',
-      message: 'Field userId is required.'
-    })
-  } else if (!title) {
-    return res.status(400).json({
-      status: 400,
-      code: 'MISSING_TITLE',
-      message: 'Field title is required.'
-    })
-  } else if (title.length < 6 || title.length > 30) {
-    return res.status(400).json({
-      status: 400,
-      code: 'INVALID_TITLE',
-      message: 'Field title must be between 6 and 30 characters.'
-    })
-  } else if (!description) {
-    return res.status(400).json({
-      status: 400,
-      code: 'MISSING_DESCRIPTION',
-      message: 'Field description is required.'
-    })
-  } else if (description.length < 60 || description.length > 500) {
-    return res.status(400).json({
-      status: 400,
-      code: 'INVALID_DESCRIPTION',
-      message: 'Field description must be between 60 and 500 characters.'
-    })
-  } else if (!image) {
-    return res.status(400).json({
-      status: 400,
-      code: 'MISSING_IMAGE',
-      message: 'Field image is required.'
-    })
-  } else if (!geos) {
-    return res.status(400).json({
-      status: 400,
-      code: 'MISSING_GEOS',
-      message: 'Field geos is required.'
-    })
-  } else if (!Array.isArray(geos)) {
-    return res.status(400).json({
-      status: 400,
-      code: 'INVALID_GEOS',
-      message: 'Field geos must be an array.'
-    })
-  }
+    const { userId, title, description } = req.body
+    const image = req.file
+    const geos = req.body.geos
+      ? req.body.geos.split(',').map(geo => parseInt(geo, 10))
+      : null
 
-  let result
-  try {
-    result = await db.query(
-      `insert into chips 
-      (title, description, img_url, created_by) 
-      values ($1, $2, $3, $4)
-      returning *;`,
-      [title, description, '/' + image.path, userId]
-    )
-  } catch (e) {
-    return processError(e, res)
-  }
+    if (!userId) {
+      return res.status(400).json({
+        status: 400,
+        code: 'MISSING_USER_ID',
+        message: 'Field userId is required.'
+      })
+    } else if (!title) {
+      return res.status(400).json({
+        status: 400,
+        code: 'MISSING_TITLE',
+        message: 'Field title is required.'
+      })
+    } else if (title.length < 6 || title.length > 40) {
+      return res.status(400).json({
+        status: 400,
+        code: 'INVALID_TITLE',
+        message: 'Field title must be between 6 and 40 characters.'
+      })
+    } else if (!description) {
+      return res.status(400).json({
+        status: 400,
+        code: 'MISSING_DESCRIPTION',
+        message: 'Field description is required.'
+      })
+    } else if (description.length < 60 || description.length > 500) {
+      return res.status(400).json({
+        status: 400,
+        code: 'INVALID_DESCRIPTION',
+        message: 'Field description must be between 60 and 500 characters.'
+      })
+    } else if (!image) {
+      return res.status(400).json({
+        status: 400,
+        code: 'MISSING_IMAGE',
+        message: 'Field image is required.'
+      })
+    } else if (!geos) {
+      return res.status(400).json({
+        status: 400,
+        code: 'MISSING_GEOS',
+        message: 'Field geos is required.'
+      })
+    } else if (!Array.isArray(geos)) {
+      return res.status(400).json({
+        status: 400,
+        code: 'INVALID_GEOS',
+        message: 'Field geos must be an array.'
+      })
+    }
 
-  try {
-    geos.forEach(async geo => {
-      await db.query(
-        `insert into geos_chips
-        (geo_id, chip_id, created_by) 
-        values ($1, $2, $3);`,
-        [geo, result.rows[0].id, userId]
+    let result
+    try {
+      result = await db.query(
+        `insert into chips 
+        (title, description, img_url, created_by) 
+        values ($1, $2, $3, $4)
+        returning *;`,
+        [title, description, '/' + image.path, userId]
       )
-    })
-  } catch (e) {
-    return processError(e, res)
-  }
+    } catch (e) {
+      return processError(e, res)
+    }
 
-  return res.send({ data: convertDbRowToChip(result.rows[0]) })
+    try {
+      geos.forEach(async geo => {
+        await db.query(
+          `insert into geos_chips
+          (geo_id, chip_id, created_by) 
+          values ($1, $2, $3);`,
+          [geo, result.rows[0].id, userId]
+        )
+      })
+    } catch (e) {
+      return processError(e, res)
+    }
+
+    return res.send({ data: convertDbRowToChip(result.rows[0]) })
+  })
 })
 
 function convertDbRowToChip(row) {
