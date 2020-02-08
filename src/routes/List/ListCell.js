@@ -91,7 +91,7 @@ const StyledListCell = styled.div`
   /* large */
   /* height: 200px; */
   grid-template-columns: 200px 1fr;
-  grid-template-rows: 100px auto;
+  grid-template-rows: 100px 100px;
   grid-template-areas:
     'image summary'
     'image description';
