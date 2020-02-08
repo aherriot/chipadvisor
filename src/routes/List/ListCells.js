@@ -40,7 +40,7 @@ const ListCells = ({ chips, geoId, geoTitle }) => {
         />
       )
 
-      if (i === numCellsToRender - 1) {
+      if (i === numCellsToRender - 2) {
         return (
           <VisibilitySensor
             onChange={isVisible => {
