@@ -91,7 +91,8 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
       } else if (result?.code === 'MISSING_IMAGE') {
         setError('image', 'error', result.message)
       } else {
-        setError('generic', 'error', result || 'Unknown error')
+        console.error(result)
+        setError('general', 'error', 'Unknown error')
       }
     }
   }

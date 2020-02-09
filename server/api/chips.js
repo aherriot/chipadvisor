@@ -1,6 +1,8 @@
 const path = require('path')
+const fs = require('fs')
 const Router = require('express-promise-router')
 const multer = require('multer')
+const sharp = require('sharp')
 
 const db = require('../db')
 const { processError } = require('./utils')
@@ -141,6 +143,26 @@ router.get('/', async (req, res) => {
   }
 })
 
+const getFileName = (title, ext) => {
+  const date = new Date()
+  return `${title}-${date.getFullYear()}-${date
+    .getUTCMonth()
+    .toString()
+    .padStart(2, 0)}-${date
+    .getUTCDay()
+    .toString()
+    .padStart(2, 0)} ${date
+    .getUTCHours()
+    .toString()
+    .padStart(2, 0)}:${date
+    .getUTCMinutes()
+    .toString()
+    .padStart(2, 0)}:${date
+    .getUTCSeconds()
+    .toString()
+    .padStart(2, 0)}${ext}`
+}
+
 const imgUpload = multer({
   limits: {
     files: 1,
@@ -148,11 +170,10 @@ const imgUpload = multer({
   },
   storage: multer.diskStorage({
     destination: function(req, file, cb) {
-      cb(null, './data/images/chips')
+      cb(null, path.resolve(__dirname, '../../data/images/chips'))
     },
     filename: function(req, file, cb) {
       const ext = path.extname(file.originalname)
-
       cb(null, req.body.title + '-' + Math.random() + ext)
     }
   }),
@@ -240,6 +261,18 @@ router.post('/', async (req, res) => {
       })
     }
 
+    const fileName = getFileName(title, path.extname(image.filename))
+    try {
+      await sharp(req.file.path)
+        .resize({ height: 200 })
+        .toFile(path.resolve(req.file.destination, fileName))
+
+      fs.unlink(req.file.path, () => {})
+    } catch (e) {
+      console.error(e)
+      return processError(e, res)
+    }
+
     let result
     try {
       result = await db.query(
@@ -247,9 +280,11 @@ router.post('/', async (req, res) => {
         (title, description, img_url, created_by) 
         values ($1, $2, $3, $4)
         returning *;`,
-        [title, description, '/' + image.path, userId]
+        [title, description, '/data/images/chips/' + fileName, userId]
       )
     } catch (e) {
+      console.error(e)
+      fs.unlink(path.resolve(req.file.destination, fileName), () => {})
       return processError(e, res)
     }
 
@@ -263,6 +298,7 @@ router.post('/', async (req, res) => {
         )
       })
     } catch (e) {
+      console.error(e)
       return processError(e, res)
     }
 
