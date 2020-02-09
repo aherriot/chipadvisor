@@ -102,7 +102,7 @@ router.get('/', async (req, res) => {
             when count(r.rating) = 1 then 0.5
             when count(r.rating) = 2 then 0.75
             else 1 end
-        desc;`,
+        desc, c.created_at;`,
         [geoId]
       )
     } else {
@@ -133,7 +133,7 @@ router.get('/', async (req, res) => {
               when count(r.rating) = 1 then 0.5
               when count(r.rating) = 2 then 0.75
               else 1 end
-          desc;`
+          desc, c.created_at;`
       )
     }
 
