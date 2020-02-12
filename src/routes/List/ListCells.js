@@ -11,7 +11,7 @@ const PAGE_SIZE = 5
 
 const ListCells = ({ chips, geoId, geoTitle }) => {
   const [searchText, setSearchText] = useState('')
-  const [numCellsToRender, setNumCellsToRender] = useState(PAGE_SIZE)
+  const [numCellsToRender, setNumCellsToRender] = useState(6)
 
   let includedCount = 0
   const filteredChips = chips
@@ -40,7 +40,7 @@ const ListCells = ({ chips, geoId, geoTitle }) => {
         />
       )
 
-      if (i === numCellsToRender - 2) {
+      if (i === numCellsToRender - 3) {
         return (
           <VisibilitySensor
             onChange={isVisible => {

@@ -11,6 +11,7 @@ import List from './routes/List'
 import Item from './routes/Item'
 import NewItem from './routes/NewItem'
 import NewReview from './routes/NewReview'
+import Errors from './routes/Errors'
 import NotFound from './routes/NotFound'
 
 const GlobalStyle = createGlobalStyle`
@@ -47,6 +48,7 @@ function App() {
             exact
             component={NewReview}></Route>
           <Route path='/chips/:geo/:chip' exact component={Item}></Route>
+          <Route path='/errors' exact component={Errors}></Route>
           <Route component={NotFound} />
         </Switch>
       </Router>

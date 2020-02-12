@@ -91,7 +91,7 @@ router.get('/', async (req, res) => {
                   when count(r.rating) = 1 then 0.5
                   when count(r.rating) = 2 then 0.75
                   else 1 end
-              desc) ranking
+              desc, c.created_at) ranking
           from geos_chips gc
           join chips c on gc.chip_id = c.id
           left join reviews r on r.chip_id = c.id
@@ -124,7 +124,7 @@ router.get('/', async (req, res) => {
                   when count(r.rating) = 1 then 0.5
                   when count(r.rating) = 2 then 0.75
                   else 1 end
-              desc) ranking
+              desc, c.created_at) ranking
           from chips c
           left join reviews r on r.chip_id = c.id
           group by c.id

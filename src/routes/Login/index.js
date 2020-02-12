@@ -6,6 +6,7 @@ import Header from 'components/Header'
 import TextInput from 'components/TextInput'
 import ErrorMessage from 'components/ErrorMessage'
 import Button from 'components/Button'
+import recordError from 'utils/recordError'
 
 function Login({ history }) {
   const { handleSubmit, register, errors, setError } = useForm()
@@ -25,6 +26,7 @@ function Login({ history }) {
 
       if (!resp.ok) {
         setError('email', 'error', result.message)
+        recordError('loginBadResponse', JSON.stringify(result))
         return
       }
       window.localStorage.setItem('username', result.data.username)
@@ -38,6 +40,7 @@ function Login({ history }) {
     } catch (e) {
       setError('email', 'error', 'Server error')
       console.error(e)
+      recordError('loginRequestFailed', JSON.stringify(e))
     }
   }
 

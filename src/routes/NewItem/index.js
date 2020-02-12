@@ -10,8 +10,7 @@ import TextInput from 'components/TextInput'
 import ErrorMessage from 'components/ErrorMessage'
 import Button from 'components/Button'
 import geosStore from 'store/geos'
-
-// import ImgThumbnail from './ImgThumbnail'
+import recordError from 'utils/recordError'
 
 const NewItem = view(({ history, match: { params: { geo } } }) => {
   const geoId = parseInt(geo, 10)
@@ -94,6 +93,7 @@ const NewItem = view(({ history, match: { params: { geo } } }) => {
         console.error(result)
         setError('general', 'error', 'Unknown error')
       }
+      recordError('submitNewChip', JSON.stringify(result))
     }
   }
 

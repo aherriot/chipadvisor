@@ -49,3 +49,14 @@ create table reviews (
 	unique(user_id, chip_id)
 );
 create index reviews_chip_id_idx on reviews(chip_id);
+
+create type error_type as enum ('CLIENT', 'SERVER');
+create table errors (
+	id serial primary key,
+	type error_type not null,
+	user_id integer references users,
+	location text,
+	action text,
+	details text,
+	created_at timestamptz not null default now()
+);

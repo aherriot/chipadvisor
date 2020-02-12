@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import recordError from 'utils/recordError'
 
 export default (url, defaultData = null) => {
   const [data, setData] = useState(defaultData)
@@ -32,10 +33,13 @@ export default (url, defaultData = null) => {
       }
 
       setIsLoading(false)
-      if (!resp.ok) {
-        setError(result)
-      } else {
-        setData(result.data)
+      if (!isCancelled) {
+        if (!resp.ok) {
+          setError(result)
+          recordError('useApi', JSON.stringify(result))
+        } else {
+          setData(result.data)
+        }
       }
     }
 
