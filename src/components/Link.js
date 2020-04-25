@@ -7,7 +7,7 @@ const StyledLink = styled(({ isDark, ...rest }) => (
 ))`
   text-decoration: none;
   color: ${({ isDark, theme }) =>
-    isDark ? theme.color.black : theme.color.green};
+    isDark ? theme.color.black : theme.color.moss};
   font-weight: bold;
 
   &:hover,

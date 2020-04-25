@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-const SPACE_BETWEEN = 11
+const SPACE_BETWEEN = 13
 
 function BubbleRating({ rating }) {
   const content = []
@@ -70,12 +70,12 @@ const StyledBubbleRating = styled.div`
 
 const StyledOuterCircle = styled.circle`
   fill-opacity: 0;
-  stroke: ${({ theme }) => theme.color.green};
+  stroke: ${({ theme }) => theme.color.moss};
   stroke-width: 2.5px;
 `
 
 const StyledInnerHalfCircle = styled.path`
-  fill: ${({ theme }) => theme.color.green};
+  fill: ${({ theme }) => theme.color.moss};
 `
 
 const InnerHalfCircle = function({ x, y, left }) {

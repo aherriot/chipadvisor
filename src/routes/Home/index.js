@@ -65,6 +65,8 @@ const StyledGeoTile = styled.div`
   background-color: ${({ theme }) => theme.color.white};
   margin: 16px;
   position: relative;
+  border-radius: 16px;
+  overflow: hidden;
 `
 
 const StyledImg = styled.img`

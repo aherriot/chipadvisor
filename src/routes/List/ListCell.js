@@ -163,7 +163,7 @@ const StyledDescription = styled.div`
 
 const StyledHighligh = styled.span`
   font-weight: bold;
-  color: ${({ theme }) => theme.color.green};
+  color: ${({ theme }) => theme.color.moss};
 `
 
 export default ListCell

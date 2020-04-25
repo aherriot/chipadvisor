@@ -7,7 +7,6 @@ const router = new Router()
 
 router.get('/', async (req, res) => {
   const { userId } = req.query
-  console.log('userId', userId, typeof userId)
   try {
     let result
     if (userId === undefined) {
